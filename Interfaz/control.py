@@ -15,6 +15,8 @@ class Control(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1024, 654)
+        # Eliminar bordes y botones del sistema
+        MainWindow.setWindowFlags(QtCore.Qt.FramelessWindowHint)
         MainWindow.setMinimumSize(QtCore.QSize(1024, 0))
         MainWindow.setMaximumSize(QtCore.QSize(1024, 768))
         MainWindow.setStyleSheet("QMainWindow{\n"

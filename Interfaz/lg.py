@@ -139,6 +139,13 @@ class Login(object):
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        
+        # Centrar ventana
+        screen_geometry = QtWidgets.QDesktopWidget().screenGeometry()
+        window_geometry = MainWindow.geometry()
+        x = (screen_geometry.width() - window_geometry.width()) // 2
+        y = (screen_geometry.height() - window_geometry.height()) // 2
+        MainWindow.move(x, y)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
