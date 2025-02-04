@@ -1,6 +1,7 @@
 import sys
 import os  # Para apagar el dispositivo
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import QMessageBox, QApplication
 
 from PyQt5.QtGui import QIcon
 from lg import Login  # Ventana Login
@@ -160,8 +161,10 @@ class ControlWindow(QtWidgets.QMainWindow):
         # Apagar el dispositivo (solo en sistemas operativos compatibles)
         if sys.platform == "win32":
             os.system("shutdown /s /t 1")  # Apagar en Windows
-        elif sys.platform == "linux" or sys.platform == "darwin":
-            os.system("shutdown now")  # Apagar en Linux/Mac
+        elif sys.platform == "linux":
+            os.system("sudo poweroff now")  # Apagar en Linux
+        elif sys.platform == "darwin":
+            os.system("sudo shutdown -h now")  # Apagar en Mac
         else:
             print("Comando de apagado no compatible con este sistema operativo")
         QApplication.quit()  # Cierra la aplicación
