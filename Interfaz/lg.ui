@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>514</width>
+    <height>254</height>
+   </rect>
+  </property>
+  <property name="cursor">
+   <cursorShape>ArrowCursor</cursorShape>
+  </property>
+  <property name="windowTitle">
+   <string>Robiotec</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>Iconos/LoogoBlanco.png</normaloff>Iconos/LoogoBlanco.png</iconset>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QMainWindow{
+	background-color: black;
+	color: white;
+}
+
+QCheckBox{
+	color: white;
+}
+
+QLabel{
+	color:white;
+}
+
+QTextEdit {
+    background-color: transparent; 
+    border: none; /* Sin bordes */
+    border-bottom: 2px solid orange; 
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+	color: white;
+}
+
+QLineEdit{
+	background-color: transparent; 
+    border: none; /* Sin bordes */
+    border-bottom: 2px solid orange; 
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+	color: white;
+}
+
+QTextEdit:focus {
+    background: qlineargradient(
+        spread:pad, 
+        x1:0, y1:0, x2:0, y2:1, 
+        stop:0 rgba(40, 100, 94, 0.0), 
+        stop:1 rgba(40, 100, 94, 0.2)  
+    );
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+QLineEdit:focus{
+	background: qlineargradient(
+        spread:pad, 
+        x1:0, y1:0, x2:0, y2:1, 
+        stop:0 rgba(40, 100, 94, 0.0), 
+        stop:1 rgba(40, 100, 94, 0.2)  
+    );
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+
+#Logo{
+	background-color: transparent;
+}
+#Logo:hover{
+	background-color: transparent;
+}
+
+</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QHBoxLayout" name="horizontalLayout" stretch="2,4">
+    <property name="spacing">
+     <number>0</number>
+    </property>
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
+     <number>0</number>
+    </property>
+    <item>
+     <widget class="QFrame" name="frame">
+      <property name="frameShape">
+       <enum>QFrame::Shape::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Shadow::Raised</enum>
+      </property>
+      <widget class="QPushButton" name="Logo">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>80</y>
+         <width>151</width>
+         <height>81</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset>
+         <normaloff>Iconos/LoogoBlanco.png</normaloff>Iconos/LoogoBlanco.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>130</width>
+         <height>100</height>
+        </size>
+       </property>
+      </widget>
+     </widget>
+    </item>
+    <item>
+     <widget class="QFrame" name="frame_2">
+      <property name="frameShape">
+       <enum>QFrame::Shape::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Shadow::Raised</enum>
+      </property>
+      <widget class="QLabel" name="label">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>20</y>
+         <width>63</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Usuario:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_2">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>100</y>
+         <width>91</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Contraseña:</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="PB_iniciar">
+       <property name="geometry">
+        <rect>
+         <x>210</x>
+         <y>190</y>
+         <width>83</width>
+         <height>29</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>Consolas</family>
+        </font>
+       </property>
+       <property name="cursor">
+        <cursorShape>PointingHandCursor</cursorShape>
+       </property>
+       <property name="text">
+        <string>INICIAR</string>
+       </property>
+      </widget>
+      <widget class="QCheckBox" name="CB_mostrar">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>160</y>
+         <width>151</width>
+         <height>26</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>7</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Mostrar contraseña</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="l_mensaj">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>190</y>
+         <width>151</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>TextLabel</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="TE_contra">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>120</y>
+         <width>271</width>
+         <height>28</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="TE_usua">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>50</y>
+         <width>271</width>
+         <height>28</height>
+        </rect>
+       </property>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
