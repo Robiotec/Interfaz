@@ -162,7 +162,7 @@ class ControlWindow(QtWidgets.QMainWindow):
         if sys.platform == "win32":
             os.system("shutdown /s /t 1")  # Apagar en Windows
         elif sys.platform == "linux":
-            os.system("sudo poweroff now")  # Apagar en Linux
+            os.system("sudo poweroff")  # Apagar en Linux
         elif sys.platform == "darwin":
             os.system("sudo shutdown -h now")  # Apagar en Mac
         else:
