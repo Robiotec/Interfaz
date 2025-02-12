@@ -7,6 +7,8 @@ from PyQt5.QtGui import QIcon
 from lg import Login  # Ventana Login
 from control import Control  # Ventana Control
 
+import serial
+
 # Credenciales
 CORRECT_USERNAME = "Robiotec"
 CORRECT_PASSWORD = "123456"
@@ -98,6 +100,59 @@ class ControlWindow(QtWidgets.QMainWindow):
         self.ui.frame_cabecera.mouseReleaseEvent = self.mouseReleaseEvent
         
         self.ui.PB_EMER.clicked.connect(self.emergencia)
+
+#TODO: ==================================== Control de Luces ====================================
+
+        #* Conectar sliders para escuchar cambios en tiempo real
+        self.ui.QS_iluminacion.valueChanged.connect(self.actualizar_intensidades)
+        self.ui.QS_iluminacion_2.valueChanged.connect(self.actualizar_intensidades)
+        self.ui.QS_iluminacion_3.valueChanged.connect(self.actualizar_intensidades)
+        self.ui.QS_iluminacion_4.valueChanged.connect(self.actualizar_intensidades)
+
+        #* Mostrar el porcentaje inicial de las Luces
+        self.ui.L_iluminacion.setText(f'{self.ui.QS_iluminacion.value()} %')
+        self.ui.L_iluminacion_2.setText(f'{self.ui.QS_iluminacion_2.value()} %')
+        self.ui.L_iluminacion_3.setText(f'{self.ui.QS_iluminacion_3.value()} %')
+        self.ui.L_iluminacion_4.setText(f'{self.ui.QS_iluminacion_4.value()} %')
+        
+    def actualizar_intensidades(self):
+        """
+        Envía las intensidades a Arduino automáticamente al mover los sliders.
+        """
+        try:
+            # Conectar al puerto serie de Arduino
+            if not hasattr(self, 'arduino') or self.arduino.is_open == False:
+                self.arduino = serial.Serial("COM4", 9600, timeout=1)
+
+            # Leer los valores actuales de los sliders
+            intensidad1 = self.ui.QS_iluminacion.value()
+            intensidad2 = self.ui.QS_iluminacion_2.value()
+            intensidad3 = self.ui.QS_iluminacion_3.value()
+            intensidad4 = self.ui.QS_iluminacion_4.value()
+
+            # Mostrar los valores actualizados en las etiquetas
+            self.ui.L_iluminacion.setText(f'{intensidad1} %')
+            self.ui.L_iluminacion_2.setText(f'{intensidad2} %')
+            self.ui.L_iluminacion_3.setText(f'{intensidad3} %')
+            self.ui.L_iluminacion_4.setText(f'{intensidad4} %')
+            
+            # Convertir los valores a un rango de 0 a 255
+            intensidad1 = int((intensidad1 / 100) * 255)
+            intensidad2 = int((intensidad2 / 100) * 255)
+            intensidad3 = int((intensidad3 / 100) * 255)
+            intensidad4 = int((intensidad4 / 100) * 255)
+
+            # Crear el comando en formato CSV
+            comando = f"{intensidad1},{intensidad2},{intensidad3},{intensidad4}\n"
+            self.arduino.write(comando.encode())  # Enviar comando a Arduino
+
+            # Leer confirmación del Arduino
+            respuesta = self.arduino.readline().decode().strip()
+            print(f"Respuesta de Arduino: {respuesta}")
+
+        except serial.SerialException as e:
+            print(f"Error al conectar con Arduino: {e}")
+
         
         
     def mousePressEvent(self, event):
