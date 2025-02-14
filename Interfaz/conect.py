@@ -1,61 +1,71 @@
 import socket
 import json
+import os
 
-class SocketCliente:
+class SocketClient:
     def __init__(self, host: str, port: int):
-        """
-        Inicializa el cliente socket con la IP y el puerto del servidor.
-        :host: Dirección IP del servidor.
-        :puerto: Puerto del servidor.
-        """
         self.host = host
         self.port = port
         self.socket = None
 
     def connect(self):
-        """
-        Conecta al servidor.
-        """
         try:
             self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.socket.connect((self.host, self.port))
-            print(f"Conectado a {self.host}:{self.port}")
+            print(f"Connected to {self.host}:{self.port}")
         except ConnectionRefusedError:
-            print(f"No se pudo conectar a {self.host}:{self.port}. El servidor podría no estar en ejecución.")
+            print(f"Could not connect to {self.host}:{self.port}. The server might not be running.")
         except Exception as e:
-            print(f"Ocurrió un error al intentar conectar: {e}")
+            print(f"An error occurred while trying to connect: {e}")
 
-    def envio_Mensaje(self, mensaje: str):
-        """
-        Envía un mensaje al servidor.
-        :mensaje: Mensaje en formato de texto a enviar.
-        """
+    def send_message(self, message: str):
         try:
             if self.socket:
-                self.socket.sendall(mensaje.encode('utf-8'))
-                # print(mensaje)
-                response = self.socket.recv(1024)
-                print(f"Mensaje del servidor: {response.decode('utf-8')}")
+                self.socket.sendall(message.encode('utf-8'))
             else:
-                print("Error: No se está conectado al servidor.")
+                print("Error: Not connected to the server.")
         except Exception as e:
-            print(f"Ocurrió un error al enviar el mensaje: {e}")
+            print(f"An error occurred while sending the message: {e}")
 
-    def envio_json(self, data: dict):
-        """
-        Envía un mensaje en formato JSON.
-        :data: Diccionario de datos a enviar como JSON.
-        """
+    def receive_message(self) -> str:
         try:
-            json_mensaje = json.dumps(data)
-            self.envio_Mensaje(json_mensaje)
+            if self.socket:
+                response = self.socket.recv(1024)
+                response_str = response.decode('utf-8')
+                return response_str
+            else:
+                print("Error: Not connected to the server.")
+                return ""
         except Exception as e:
-            print(f"Ocurrió un error al enviar el JSON: {e}")
+            print(f"An error occurred while receiving the message: {e}")
+            return ""
 
-    def cierra_coneccion(self):
-        """
-        Cierra la conexión con el servidor.
-        """
+    def receive_file(self, file_path: str):
+        try:
+            if self.socket:
+                with open(file_path, 'wb') as file:
+                    while True:
+                        data = self.socket.recv(1024)
+                        if not data:
+                            break
+                        file.write(data)
+                print(f"File received and saved to {file_path}")
+            else:
+                print("Error: Not connected to the server.")
+        except Exception as e:
+            print(f"An error occurred while receiving the file: {e}")
+
+    def send_json(self, data: dict) -> str:
+        try:
+            json_message = json.dumps(data)
+            self.send_message(json_message)
+            response = self.receive_message()
+            return response
+        except Exception as e:
+            print(f"An error occurred while sending the JSON: {e}")
+            return ""
+
+    def close_connection(self):
         if self.socket:
             self.socket.close()
-            print("Conexión cerrada.")
+            print("Connection closed.")

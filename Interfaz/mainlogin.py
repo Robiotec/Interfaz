@@ -1,78 +1,71 @@
 import sys
+import serial
 import os  # Para apagar el dispositivo
+
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMessageBox, QApplication
-
 from PyQt5.QtGui import QIcon
+
 from lg import Login  # Ventana Login
 from control import Control  # Ventana Control
 
-import serial
-
-# Credenciales
+#? Credenciales
 CORRECT_USERNAME = "Robiotec"
 CORRECT_PASSWORD = "123456"
 
+#TODO: Clase para el control del Login a la Ventana control
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
         self.ui = Login()
-        
         self.ui.setupUi(self)
-
-        # Oculta el mensaje al iniciar
         self.ui.l_mensaj.setVisible(False)
-
-        # Configura TE_contra
         self.ui.TE_contra.setEchoMode(QtWidgets.QLineEdit.Password)
-
-        # Conexion de lógica CB_mostrar
         self.ui.CB_mostrar.stateChanged.connect(self.toggle_password_visibility)
-
-        # Conecta el botón iniciar sesión
         self.ui.PB_iniciar.clicked.connect(self.validate_credentials)
 
+    #* Muestra y Oculta la contraseña
     def toggle_password_visibility(self):
-        """Muestra y Oculta la contraseña según el estado del checkbox."""
+        
         if self.ui.CB_mostrar.isChecked():
             self.ui.TE_contra.setEchoMode(QtWidgets.QLineEdit.Normal)
         else:
             self.ui.TE_contra.setEchoMode(QtWidgets.QLineEdit.Password)
 
+    #* Validación de Credenciales
     def validate_credentials(self):
-        """Valida las credenciales"""
+        
         username = self.ui.TE_usua.text().strip()
         password = self.ui.TE_contra.text().strip()
 
         if username == CORRECT_USERNAME and password == CORRECT_PASSWORD:
-            self.show_message("¡Acceso correcto!", "green")
-            
+            self.show_message("Acceso correcto", "green")
             self.ui.TE_usua.clear()
             self.ui.TE_contra.clear()
-            
-            # redirige a la ventana de control
+            #! Esto hay que eliminar para el login funcione correctamente
             QtCore.QTimer.singleShot(500, self.redirect_to_control)
+
         else:
             self.show_message("Acceoso incorrectos.", "red")
             self.ui.TE_usua.clear()
             self.ui.TE_contra.clear()
             QtCore.QTimer.singleShot(500, self.redirect_to_control)
-
+   
+    #* Muestra el mensaje
     def show_message(self, message, color):
-        """Mostrar un mensaje."""
+        
         self.ui.l_mensaj.setText(message)
         self.ui.l_mensaj.setStyleSheet(f"color: {color};")
         self.ui.l_mensaj.setVisible(True)
+        QtCore.QTimer.singleShot(3000, lambda: self.ui.l_mensaj.setVisible(False)) # Oculata el mensaje dentro de 3 segundos
 
-        # Ocultar el mensaje después de 3 segundos
-        QtCore.QTimer.singleShot(3000, lambda: self.ui.l_mensaj.setVisible(False))
-
+    #* Redircción a la ventana principal
     def redirect_to_control(self):
-        """Redirige a la ventana de control y cerra la ventana actual."""
+        
         self.control_window = ControlWindow()
         # self.control_window.showFullScreen()
         self.control_window.show()
-        self.close()  # Cierra la ventana de login
+        self.close()
 
 class ControlWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
@@ -175,8 +168,7 @@ class ControlWindow(QtWidgets.QMainWindow):
             event.accept()
 
     def close(self):
-        print("Cerrando ventana de control")
-        super().close()
+        super().close() # Cerrando ventana de control"
     
     def toggle_menu(self):
         """oculta el menú lateral"""
