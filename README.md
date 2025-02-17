@@ -20,17 +20,16 @@ El **ORE SORTER** es un sistema diseñado para mejorar la clasificación de mine
 El repositorio está organizado de la siguiente manera:
 
 ORE_SORTER_HMI/
-├── src/               
-│   ├── main.py        
-│   ├── views.py       
-│   ├── controllers.py 
-│   └── utils.py       
-├── assets/            
-├── docs/              
-├── requirements.txt   
-|── README.md          
+|── CONFIG
+|── MODELS
+|── CONTROLLERS
+|── VIEWS
+├── src/
+|      |── Stylos.qss
+├── ICONOS
+├── requirements.txt 
+|── APP.py
 └── README.md          
-
 
 ## Requisitos
 
