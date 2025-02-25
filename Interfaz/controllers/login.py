@@ -81,6 +81,14 @@ class ControlWindow(QtWidgets.QMainWindow):
         self.ui.PB_ayuda.clicked.connect(self.ayuda)
         self.ui.PB_apagar.clicked.connect(self.salir)
         
+        self.system_active = False
+        self.mode_active = 0
+        self.selected_valve = None
+        
+        #* Conección con el servidor
+        self.client = SocketClient("192.168.1.100", 5000)
+        self.client.connect()
+        
         # Variables para mover la ventana
         self.is_dragging = False
         self.offset = QtCore.QPoint()
@@ -94,7 +102,9 @@ class ControlWindow(QtWidgets.QMainWindow):
         
         # self.ui.
         # Proceso de conttol para la ctivación de las valvulas
-        self.ui.PB_todas.clicked.connect(self.process_ciclos_valve)
+        self.ui.PB_todas.clicked.connect(self.process_todas_valve)
+        
+        self.ui.PB_ciclo.clicked.connect(self.process_ciclos_valve)
         
         self.ui.CB_Camaras.clicked.connect(self.toggle_camera)
         
@@ -102,6 +112,29 @@ class ControlWindow(QtWidgets.QMainWindow):
         self.capture = None
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.update_frame)
+        
+#TODO: ================================= Obtener el Json =================================================================
+    
+    def obtener_json_base(self, device_type, additional_params=None):
+        base_json = {
+            "device": device_type,
+        }
+        if additional_params:
+            base_json.update(additional_params)
+        return base_json
+    
+    # def send_json_async(self, json, handle=None, handle_videos=False):
+    #     # self.worker = Worker(self.client, json, handle_videos)
+        
+    #     # send_json = Process()
+        
+    #     if handle == "stop_video":
+    #         self.worker.response_received.connect(self.handle_video_response)
+    #     elif handle == "cycle":
+    #         self.worker.response_received.connect(self.handle_cycle_response)
+    #     elif handle == "stop_system":
+    #         self.worker.response_received.connect(self.handle_ose_response)
+    #     self.worker.start()
         
 
 #TODO: ==================================== Control de Luces ====================================
@@ -285,6 +318,11 @@ class ControlWindow(QtWidgets.QMainWindow):
             scene.addPixmap(pixmap)
             self.ui.graphicsView.setScene(scene)
 
+    def handle_cycle_response(self, response):
+        print(response)
+        
+    def enviomessege(self, json):
+        self.client.send_json(json)
 
     def process_individual_valve(valula):
         """ Activación de las valvulas individual """
@@ -292,9 +330,15 @@ class ControlWindow(QtWidgets.QMainWindow):
         """ Activa todas las valvulas de golpe"""
     def process_ciclos_valve(self):
         """ Proceso para la activación de todas las valvulas """
+        self.mode_active = 1
+        json = self.obtener_json_base("valve", {"valve_mode": 1})
+        
+        send_Json = Process(target=self.enviomessege, args=('json',))
+        send_Json.start()
+        send_Json.join()
+        # self.send_json_async(json, "cycle")
+        
     
         print("Proceso de activación de todas las valvulas")
         # conec = SocketClient("192.168.1.100", 5000)
         # conec.connect()
-        
-        

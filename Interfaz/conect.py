@@ -59,7 +59,7 @@ class SocketClient:
         try:
             json_message = json.dumps(data)
             self.send_message(json_message)
-            response = self.receive_message()
+            # response = self.receive_message()
             return response
         except Exception as e:
             print(f"An error occurred while sending the JSON: {e}")
