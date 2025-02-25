@@ -11,7 +11,6 @@ class Control(object):
         MainWindow.setMinimumSize(QtCore.QSize(1024, 0))
         MainWindow.setMaximumSize(QtCore.QSize(1024, 768))
         MainWindow.setStyleSheet(self.stylos()) #* Inyect los Estylos
-        
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.centralwidget)

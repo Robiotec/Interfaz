@@ -1,6 +1,8 @@
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import QTimer
+
 from control import Control  # Ventana Control
+from config.credenciales import CORRECT_USERNAME, CORRECT_PASSWORD
 
 from PyQt5.QtGui import QImage, QPixmap, QIcon
 from PyQt5.QtWidgets import QGraphicsScene
@@ -8,16 +10,11 @@ from PyQt5.QtWidgets import QGraphicsScene
 from conect import SocketClient
 
 from multiprocessing import Process, cpu_count
-from conect import SocketClient
-
 # import cv2
-
-# Credenciales
-CORRECT_USERNAME = "Robiotec"
-CORRECT_PASSWORD = "123456"
 
 class LoginBack(QtWidgets.QWidget):
     def __init__(self, main_windows, username=None, password=None):
+        super().__init__()
         self.main_windows = main_windows
         self.username = username or ""
         self.password = password or ""
@@ -34,7 +31,7 @@ class LoginBack(QtWidgets.QWidget):
         username = username_field.text().strip()
         password = password_field.text().strip()
 
-        if username == CORRECT_USERNAME and password == CORRECT_PASSWORD:
+        if self.is_valid_user(username, password):
             self.show_message(l_mensaj, "¡Acceso correcto!", "green")
             username_field.clear()
             password_field.clear()
@@ -44,6 +41,9 @@ class LoginBack(QtWidgets.QWidget):
             username_field.clear()
             password_field.clear()
             self.redirect_to_control()
+            
+    def is_valid_user(self, username, password):
+        return username == CORRECT_USERNAME and password == CORRECT_PASSWORD
     
     #* Muestra el mensaje
     def show_message(self, l_mensaj, message, color):
@@ -101,11 +101,7 @@ class ControlWindow(QtWidgets.QMainWindow):
         
         self.ui.PB_EMER.clicked.connect(self.emergencia)
         
-        # self.ui.
-        # Proceso de conttol para la ctivación de las valvulas
-        # self.ui.PB_todas.clicked.connect(self.process_todas_valve)
-        
-        self.ui.PB_ciclo.clicked.connect(self.process_ciclos_valve)
+        self.ui.PB_ciclo.clicked.connect(self.process_ciclos_valve) # Activa las valvulas por ciclo
         
         for i in range(1, 100):  # Del 1 al 99
             button = getattr(self.ui, f'PB_{i}')  # Obtiene el botón usando getattr
@@ -128,15 +124,11 @@ class ControlWindow(QtWidgets.QMainWindow):
         if additional_params:
             base_json.update(additional_params)
         return base_json
-    
-    # def toggle_valve_panel(self):
-        
-        # if self.mode_active == 3:
             
     def activate_valve_individual(self):
         valve_mode = 3
-        button = self.sender()
         
+        button = self.sender()
         button_number = int(button.objectName().split('_')[1])
         
         valve_number = (button_number - 1) // 9 + 1
@@ -148,22 +140,8 @@ class ControlWindow(QtWidgets.QMainWindow):
         json = self.obtener_json_base("valve", json_data)
         self.client.send_json(json)
         # Realiza la acción deseada dependiendo del botón presionado
-        print(individual_valves)
+        print(f'Activando válvula para el botón {valve_number}: {output_number}')
         # Aquí puedes agregar el código para activar la válvula correspondiente
-
-    # def send_json_async(self, json, handle=None, handle_videos=False):
-    #     # self.worker = Worker(self.client, json, handle_videos)
-        
-    #     # send_json = Process()
-        
-    #     if handle == "stop_video":
-    #         self.worker.response_received.connect(self.handle_video_response)
-    #     elif handle == "cycle":
-    #         self.worker.response_received.connect(self.handle_cycle_response)
-    #     elif handle == "stop_system":
-    #         self.worker.response_received.connect(self.handle_ose_response)
-    #     self.worker.start()
-        
 
 #TODO: ==================================== Control de Luces ====================================
 
@@ -302,10 +280,6 @@ class ControlWindow(QtWidgets.QMainWindow):
         else:
             print("Parado de emergencia desactivado")
             self.ui.PB_EMER.setIcon(QIcon("src/Iconos/Start.png"))
-            
-# if __name__ == "__main__":
-    
-    # con = Process
     
     def extraccion_video_player(self):
         print(" Activación de la camara ")
@@ -345,22 +319,17 @@ class ControlWindow(QtWidgets.QMainWindow):
             scene = QGraphicsScene()
             scene.addPixmap(pixmap)
             self.ui.graphicsView.setScene(scene)
-
-    def handle_cycle_response(self, response):
-        print(response)
         
     def enviomessege(self, json):
         self.client.send_json(json)
 
-    def process_individual_valve(valula):
         """ Activación de las valvulas individual """
     def process_todas_valve(self):        
         """ Activa todas las valvulas de golpe"""
+    #* Proceso para la activación de todas las valvulas
     def process_ciclos_valve(self):
-        """ Proceso para la activación de todas las valvulas """
         self.mode_active = 1
         json = self.obtener_json_base("valve", {"valve_mode": 1})
-        
         send_Json = Process(target=self.enviomessege, args=(json,))
         send_Json.start()
         send_Json.join()
