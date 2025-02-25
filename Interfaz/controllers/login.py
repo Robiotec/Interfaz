@@ -10,7 +10,7 @@ from conect import SocketClient
 from multiprocessing import Process, cpu_count
 from conect import SocketClient
 
-import cv2
+# import cv2
 
 # Credenciales
 CORRECT_USERNAME = "Robiotec"
@@ -85,6 +85,7 @@ class ControlWindow(QtWidgets.QMainWindow):
         self.mode_active = 0
         self.selected_valve = None
         
+        
         #* Conección con el servidor
         self.client = SocketClient("192.168.1.100", 5000)
         self.client.connect()
@@ -102,9 +103,14 @@ class ControlWindow(QtWidgets.QMainWindow):
         
         # self.ui.
         # Proceso de conttol para la ctivación de las valvulas
-        self.ui.PB_todas.clicked.connect(self.process_todas_valve)
+        # self.ui.PB_todas.clicked.connect(self.process_todas_valve)
         
         self.ui.PB_ciclo.clicked.connect(self.process_ciclos_valve)
+        
+        for i in range(1, 100):  # Del 1 al 99
+            button = getattr(self.ui, f'PB_{i}')  # Obtiene el botón usando getattr
+            button.clicked.connect(self.activate_valve_individual)
+
         
         self.ui.CB_Camaras.clicked.connect(self.toggle_camera)
         
@@ -123,6 +129,27 @@ class ControlWindow(QtWidgets.QMainWindow):
             base_json.update(additional_params)
         return base_json
     
+    # def toggle_valve_panel(self):
+        
+        # if self.mode_active == 3:
+            
+    def activate_valve_individual(self):
+        valve_mode = 3
+        button = self.sender()
+        
+        button_number = int(button.objectName().split('_')[1])
+        
+        valve_number = (button_number - 1) // 9 + 1
+        
+        individual_valves = f"V{valve_number + 1}/{button_number + 1}"
+
+        json_data = {"valve_mode": valve_mode, "individual_valves": individual_valves}
+        json = self.obtener_json_base("valve", json_data)
+        self.client.send_json(json)
+        # Realiza la acción deseada dependiendo del botón presionado
+        print(f'Activando válvula para el botón {valve_number}: {button_number}')
+        # Aquí puedes agregar el código para activar la válvula correspondiente
+
     # def send_json_async(self, json, handle=None, handle_videos=False):
     #     # self.worker = Worker(self.client, json, handle_videos)
         
@@ -135,7 +162,7 @@ class ControlWindow(QtWidgets.QMainWindow):
     #     elif handle == "stop_system":
     #         self.worker.response_received.connect(self.handle_ose_response)
     #     self.worker.start()
-        
+
 
 #TODO: ==================================== Control de Luces ====================================
 
@@ -333,12 +360,14 @@ class ControlWindow(QtWidgets.QMainWindow):
         self.mode_active = 1
         json = self.obtener_json_base("valve", {"valve_mode": 1})
         
-        send_Json = Process(target=self.enviomessege, args=('json',))
+        send_Json = Process(target=self.enviomessege, args=(json,))
         send_Json.start()
         send_Json.join()
         # self.send_json_async(json, "cycle")
+        print("Proceso de activación de todas las valvulas")
+    
+    def select_valve(self, valve_index):
+        self.selected_valve = valve_index
+        self.toggle_valve_panel(True)
         
     
-        print("Proceso de activación de todas las valvulas")
-        # conec = SocketClient("192.168.1.100", 5000)
-        # conec.connect()
