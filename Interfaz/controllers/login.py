@@ -140,14 +140,15 @@ class ControlWindow(QtWidgets.QMainWindow):
         button_number = int(button.objectName().split('_')[1])
         
         valve_number = (button_number - 1) // 9 + 1
+        output_number = (button_number - 1) % 9 + 1
         
-        individual_valves = f"V{valve_number + 1}/{button_number + 1}"
+        individual_valves = f"V{valve_number}/{output_number}"
 
         json_data = {"valve_mode": valve_mode, "individual_valves": individual_valves}
         json = self.obtener_json_base("valve", json_data)
         self.client.send_json(json)
         # Realiza la acción deseada dependiendo del botón presionado
-        print(f'Activando válvula para el botón {valve_number}: {button_number}')
+        print(individual_valves)
         # Aquí puedes agregar el código para activar la válvula correspondiente
 
     # def send_json_async(self, json, handle=None, handle_videos=False):
@@ -162,7 +163,7 @@ class ControlWindow(QtWidgets.QMainWindow):
     #     elif handle == "stop_system":
     #         self.worker.response_received.connect(self.handle_ose_response)
     #     self.worker.start()
-
+        
 
 #TODO: ==================================== Control de Luces ====================================
 
