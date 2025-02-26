@@ -1,5 +1,7 @@
+import sys
+import os
 from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtCore import QTimer
+from PyQt5.QtCore import QTimer, QSize
 
 from control import Control  # Ventana Control
 from config.credenciales import CORRECT_USERNAME, CORRECT_PASSWORD
@@ -80,10 +82,7 @@ class ControlWindow(QtWidgets.QMainWindow):
         self.system_active = False
         self.mode_active = 0
         self.selected_valve = None
-        # self.beta = False
-        # self.caja = False
         self.select = 0
-        
         
         #* Conección con el servidor
         self.client = SocketClient("192.168.1.100", 5000)
@@ -105,7 +104,6 @@ class ControlWindow(QtWidgets.QMainWindow):
         for i in range(1, 100):  # Del 1 al 99
             button = getattr(self.ui, f'PB_{i}')  # Obtiene el botón usando getattr
             button.clicked.connect(self.activate_valve_individual)
-
         
         self.ui.CB_Camaras.clicked.connect(self.toggle_camera)
         
@@ -113,14 +111,10 @@ class ControlWindow(QtWidgets.QMainWindow):
         self.capture = None
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.update_frame)
-        
-        # self.ui.PB_beta.clicked.connect(self.bt_beta)
         self.ui.PB_beta.clicked.connect(self.beta_caja)
         self.ui.PB_caja.clicked.connect(self.beta_caja)
-        # self.ui.PB_caja.clicked.connect(self.bt_caja)
         
 #TODO: ================================= Obtener el Json =================================================================
-    
     def obtener_json_base(self, device_type, additional_params=None):
         base_json = {
             "device": device_type,
@@ -148,7 +142,6 @@ class ControlWindow(QtWidgets.QMainWindow):
         # Aquí puedes agregar el código para activar la válvula correspondiente
 
 #TODO: ==================================== Control de Luces ====================================
-
         #* Conectar sliders para escuchar cambios en tiempo real
         self.ui.QS_iluminacion.valueChanged.connect(self.actualizar_intensidades)
         self.ui.QS_iluminacion_2.valueChanged.connect(self.actualizar_intensidades)
@@ -196,8 +189,6 @@ class ControlWindow(QtWidgets.QMainWindow):
 
         except serial.SerialException as e:
             print(f"Error al conectar con Arduino: {e}")
-
-        
         
     def mousePressEvent(self, event):
         """Detecta cuando el ratón es presionado sobre el frame de la cabecera."""
@@ -222,13 +213,19 @@ class ControlWindow(QtWidgets.QMainWindow):
         print("Cerrando ventana de control")
         super().close()
     
+    #* oculta el menú lateral
     def toggle_menu(self):
-        """oculta el menú lateral"""
         current_width = self.ui.frame_menucontroles.width()
         # Alterna entre el ancho original y el ancho reducido
         new_width = 60 if current_width == self.ui.PB_menu.width() else self.ui.PB_menu.width()
         self.ui.frame_menucontroles.setFixedWidth(new_width)
-        
+        if new_width == 60:
+            self.ui.PB_logo2.setIcon(QIcon("src/Iconos/logoSimplificadoC.png"))
+            self.ui.PB_logo2.setIconSize(QSize(30, 30))
+        else:
+            self.ui.PB_logo2.setIcon(QIcon("src/Iconos/LoogoBlanco.png"))
+            self.ui.PB_logo2.setIconSize(QSize(180, 180))
+            
     def minimize_window(self):
         """Función personalizada para minimizar la ventana"""
         self.setWindowState(self.windowState() | QtCore.Qt.WindowMinimized)
@@ -239,7 +236,7 @@ class ControlWindow(QtWidgets.QMainWindow):
             self.showNormal()
         else:
             self.showMaximized()
-            
+
     def produccion(self):
         # Cambia a la pagina de produccion
         self.ui.stackedWidget.setCurrentWidget(self.ui.page)
@@ -267,9 +264,7 @@ class ControlWindow(QtWidgets.QMainWindow):
         else:
             print("Comando de apagado no compatible con este sistema operativo")
         QApplication.quit()  # Cierra la aplicación
-        
-        # self.ui.PB_apagar.style.backgroundColor = "red"
-        
+  
     def emergencia(self):
         # Definir la variable de estado en el constructor
         if not hasattr(self, 'emergency_active'):
@@ -307,13 +302,13 @@ class ControlWindow(QtWidgets.QMainWindow):
                     # "camera_id": [0, 1],
                     # "is_grabbing": self.btn_grab_video.isChecked(),
                     # "is_gridding": self.btn_activate_grid.isChecked(),
-                    # "is_ejecting": self.btn_activate_valves.isChecked(),
+                    "is_ejecting": True,
                     "selection": self.select,
                     "is_predicting": True,
                 },
             )
             
-            self.client.sendJSON(json)
+            self.client.send_json(json)
                 
             
         else:
@@ -341,7 +336,7 @@ class ControlWindow(QtWidgets.QMainWindow):
         print(" Activación de la camara ")
         
     def toggle_camera(self):
-        # Al marcar o desmarcar el checkbox
+        
         if self.ui.CB_Camaras.isChecked():
             print("Cámara activa")
             self.activate_camera()
@@ -399,10 +394,10 @@ class ControlWindow(QtWidgets.QMainWindow):
     def beta_caja(self):
         if self.select == 0:
             self.select = 1
-            self.ui.PB_beta.setStyleSheet("background-color: #39FF14; border-radius: 5px;")
+            self.ui.PB_beta.setStyleSheet("background-color: #ff7400; border-radius: 5px;")
             self.ui.PB_caja.setStyleSheet("background-color: lightgray; border-radius: 3px;")
         else:
             self.select = 0
-            self.ui.PB_caja.setStyleSheet("background-color: #39FF14; border-radius: 5px;")
+            self.ui.PB_caja.setStyleSheet("background-color: #ff7400; border-radius: 5px;")
             self.ui.PB_beta.setStyleSheet("background-color: lightgray; border-radius: 3px;")
         # return self.select
