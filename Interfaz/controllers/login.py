@@ -4,7 +4,7 @@ from PyQt5.QtCore import QTimer
 from control import Control  # Ventana Control
 from config.credenciales import CORRECT_USERNAME, CORRECT_PASSWORD
 
-from PyQt5.QtGui import QImage, QPixmap, QIcon
+from PyQt5.QtGui import QImage, QPixmap, QIcon, QMovie
 from PyQt5.QtWidgets import QGraphicsScene
 
 from conect import SocketClient
@@ -55,11 +55,7 @@ class LoginBack(QtWidgets.QWidget):
     
     #* Redirige a la ventana de control y cerra la ventana actual.
     def redirect_to_control(self):
-        
-        # print("Redirigiendo a la ventana de control")
         self.control_window = ControlWindow()
-        # print(self.control_window)
-        # self.control_window.showFullScreen()
         self.control_window.show()
         self.main_windows.close()
 
@@ -84,6 +80,9 @@ class ControlWindow(QtWidgets.QMainWindow):
         self.system_active = False
         self.mode_active = 0
         self.selected_valve = None
+        # self.beta = False
+        # self.caja = False
+        self.select = 0
         
         
         #* Conección con el servidor
@@ -114,6 +113,11 @@ class ControlWindow(QtWidgets.QMainWindow):
         self.capture = None
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.update_frame)
+        
+        # self.ui.PB_beta.clicked.connect(self.bt_beta)
+        self.ui.PB_beta.clicked.connect(self.beta_caja)
+        self.ui.PB_caja.clicked.connect(self.beta_caja)
+        # self.ui.PB_caja.clicked.connect(self.bt_caja)
         
 #TODO: ================================= Obtener el Json =================================================================
     
@@ -277,10 +281,62 @@ class ControlWindow(QtWidgets.QMainWindow):
         if self.emergency_active:
             print("Parado de emergencia activado")
             self.ui.PB_EMER.setIcon(QIcon("src/Iconos/Detener.png"))
+            self.ui.set_gif_visibility(True)
+            
+            self.ui.PB_beta.setEnabled(False)
+            self.ui.PB_caja.setEnabled(False)
+            self.ui.PB_left.setEnabled(False)
+            self.ui.PB_right.setEnabled(False)
+            self.ui.CB_Camaras.setEnabled(False)
+            self.ui.checkBox_2.setEnabled(False)
+            self.ui.checkBox_3.setEnabled(False)
+            self.ui.checkBox_4.setEnabled(False)
+            self.ui.checkBox_5.setEnabled(False)
+            self.ui.checkBox_6.setEnabled(False)
+            self.ui.PB_grid.setEnabled(False)
+            self.ui.PB_fondo.setEnabled(False)
+            self.ui.PB_banda.setEnabled(False)
+            self.ui.PB_saranda.setEnabled(False)
+            self.ui.PB_test.setEnabled(False)
+            
+            # Setear Beta Siempre
+            
+            json = self.obtener_json_base(
+                "camera",
+                {
+                    # "camera_id": [0, 1],
+                    # "is_grabbing": self.btn_grab_video.isChecked(),
+                    # "is_gridding": self.btn_activate_grid.isChecked(),
+                    # "is_ejecting": self.btn_activate_valves.isChecked(),
+                    "selection": self.select,
+                    "is_predicting": True,
+                },
+            )
+            
+            self.client.sendJSON(json)
+                
+            
         else:
             print("Parado de emergencia desactivado")
             self.ui.PB_EMER.setIcon(QIcon("src/Iconos/Start.png"))
-    
+            self.ui.set_gif_visibility(False)
+            
+            self.ui.PB_beta.setEnabled(True)
+            self.ui.PB_caja.setEnabled(True)
+            self.ui.PB_left.setEnabled(True)
+            self.ui.PB_right.setEnabled(True)
+            self.ui.CB_Camaras.setEnabled(True)
+            self.ui.checkBox_2.setEnabled(True)
+            self.ui.checkBox_3.setEnabled(True)
+            self.ui.checkBox_4.setEnabled(True)
+            self.ui.checkBox_5.setEnabled(True)
+            self.ui.checkBox_6.setEnabled(True)
+            self.ui.PB_grid.setEnabled(True)
+            self.ui.PB_fondo.setEnabled(True)
+            self.ui.PB_banda.setEnabled(True)
+            self.ui.PB_saranda.setEnabled(True)
+            self.ui.PB_test.setEnabled(True)
+            
     def extraccion_video_player(self):
         print(" Activación de la camara ")
         
@@ -340,4 +396,13 @@ class ControlWindow(QtWidgets.QMainWindow):
         self.selected_valve = valve_index
         self.toggle_valve_panel(True)
         
-    
+    def beta_caja(self):
+        if self.select == 0:
+            self.select = 1
+            self.ui.PB_beta.setStyleSheet("background-color: #39FF14; border-radius: 5px;")
+            self.ui.PB_caja.setStyleSheet("background-color: lightgray; border-radius: 3px;")
+        else:
+            self.select = 0
+            self.ui.PB_caja.setStyleSheet("background-color: #39FF14; border-radius: 5px;")
+            self.ui.PB_beta.setStyleSheet("background-color: lightgray; border-radius: 3px;")
+        # return self.select

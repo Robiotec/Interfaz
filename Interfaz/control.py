@@ -232,6 +232,22 @@ class Control(object):
         self.graphicsView = QtWidgets.QGraphicsView(self.frame_7)
         self.graphicsView.setObjectName("graphicsView")
         self.verticalLayout_4.addWidget(self.graphicsView)
+        
+        self.graphicsView.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.graphicsView.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        background_color = QtGui.QColor(38, 38, 38)  # Color gris claro (ajustalo como desees)
+        self.graphicsView.setStyleSheet(f"background-color: {background_color.name()};")
+        self.scene = QtWidgets.QGraphicsScene(self.graphicsView)
+        self.graphicsView.setScene(self.scene)
+        self.movie = QtGui.QMovie("src/Iconos/MaX2.gif")
+        self.gif_item = QtWidgets.QGraphicsPixmapItem()
+        self.scene.addItem(self.gif_item)
+        self.gif_item.setVisible(False)
+        self.movie.frameChanged.connect(self.update_gif)
+        self.movie.start()
+        self.graphicsView.setRenderHint(QtGui.QPainter.Antialiasing)
+        
+        
         self.horizontalLayout_5.addWidget(self.frame_7)
         self.frame_derecho = QtWidgets.QFrame(self.frame_3)
         self.frame_derecho.setMaximumSize(QtCore.QSize(62, 16777215))
@@ -1504,6 +1520,15 @@ class Control(object):
         except:
             print("No cargo el archivo")
             return ""
+        
+    def update_gif(self):
+        self.gif_item.setPixmap(self.movie.currentPixmap())
+        
+        self.graphicsView.setRenderHint(QtGui.QPainter.Antialiasing)
+        self.graphicsView.centerOn(self.gif_item)
+    
+    def set_gif_visibility(self, visible):
+        self.gif_item.setVisible(visible)
 
 if __name__ == "__main__":
     import sys
