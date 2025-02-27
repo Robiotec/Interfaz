@@ -55,6 +55,7 @@ class LoginBack(QtWidgets.QWidget):
     #* Redirige a la ventana de control y cerra la ventana actual.
     def redirect_to_control(self):
         self.control_window = ControlWindow()
+        self.control_window.showFullScreen()
         self.control_window.show()
         self.main_windows.close()
 #TODO: =============================================== Panel de Control =====================================================
@@ -292,6 +293,7 @@ class ControlWindow(QtWidgets.QMainWindow):
                     # "camera_id": [0, 1],
                     # "is_grabbing": self.btn_grab_video.isChecked(),
                     # "is_gridding": self.btn_activate_grid.isChecked(),
+                    "is_grabbing": False,
                     "is_ejecting": True,
                     "selection": self.select,
                     "is_predicting": True,
@@ -338,6 +340,19 @@ class ControlWindow(QtWidgets.QMainWindow):
     def toggle_camera(self):
         if self.ui.CB_Camaras.isChecked():
             self.ui.label.setText("Modo: Grabar Video")
+            
+            json = self.obtener_json_base(
+                "camera",
+                {
+                    # "camera_id": [0, 1],
+                    "is_grabbing": True,
+                    # "is_gridding": self.btn_activate_grid.isChecked(),
+                    # "is_ejecting": True,
+                    "selection": self.select,
+                    # "is_predicting": True,
+                },
+            )
+            self.client.send_json(json)
             # print("Cámara activa")
             # self.activate_camera()
         else:
