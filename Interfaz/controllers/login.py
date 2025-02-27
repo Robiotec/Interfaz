@@ -265,7 +265,7 @@ class ControlWindow(QtWidgets.QMainWindow):
 
         if self.emergency_active:
             self.ui.PB_EMER.setIcon(QIcon("src/Iconos/Detener.png"))
-            self.ui.set_gif_visibility(True)
+            # self.ui.set_gif_visibility(True)
             
             self.ui.PB_beta.setEnabled(False)
             self.ui.PB_caja.setEnabled(False)
@@ -304,7 +304,9 @@ class ControlWindow(QtWidgets.QMainWindow):
 
         else:
             self.ui.PB_EMER.setIcon(QIcon("src/Iconos/Start.png"))
-            self.ui.set_gif_visibility(False)
+            # self.ui.set_gif_visibility(False)
+            
+            self.ui.view_media_player()
             
             self.ui.PB_beta.setEnabled(True)
             self.ui.PB_caja.setEnabled(True)
