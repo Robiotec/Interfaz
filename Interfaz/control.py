@@ -1386,7 +1386,7 @@ class Control(object):
         self.label_10.setText(_translate("MainWindow", "# de Cajas:"))
         self.label_12.setText(_translate("MainWindow", "0"))
         self.label_13.setText(_translate("MainWindow", "Activaciones Individuales"))
-        self.label_14.setText(_translate("MainWindow", "Camaras"))
+        self.label_14.setText(_translate("MainWindow", "Grabar"))
         self.label_15.setText(_translate("MainWindow", "Valvulas"))
         self.label_16.setText(_translate("MainWindow", "Banda"))
         self.label_21.setText(_translate("MainWindow", "Saranda"))

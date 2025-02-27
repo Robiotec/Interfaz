@@ -11,7 +11,6 @@ from views.lg import Login  # Ventana Login
 from controllers.login import LoginBack  # back Login
 from control import Control  # Ventana Control
 
-
 from multiprocessing import Process, cpu_count
 
 class MainWindow(QtWidgets.QMainWindow):

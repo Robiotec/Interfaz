@@ -1,19 +1,16 @@
 import sys
 import os
+from multiprocessing import Process, cpu_count
+
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import QTimer, QSize
-
-from control import Control  # Ventana Control
-from config.credenciales import CORRECT_USERNAME, CORRECT_PASSWORD
-
 from PyQt5.QtGui import QImage, QPixmap, QIcon, QMovie
 from PyQt5.QtWidgets import QGraphicsScene
 
-from conect import SocketClient
-
-from multiprocessing import Process, cpu_count
+from services.conect import SocketClient
+from control import Control 
+from config.credenciales import CORRECT_USERNAME, CORRECT_PASSWORD
 # import cv2
-
 class LoginBack(QtWidgets.QWidget):
     def __init__(self, main_windows, username=None, password=None):
         super().__init__()
@@ -60,7 +57,7 @@ class LoginBack(QtWidgets.QWidget):
         self.control_window = ControlWindow()
         self.control_window.show()
         self.main_windows.close()
-
+#TODO: =============================================== Panel de Control =====================================================
 
 class ControlWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
@@ -125,7 +122,6 @@ class ControlWindow(QtWidgets.QMainWindow):
             
     def activate_valve_individual(self):
         valve_mode = 3
-        
         button = self.sender()
         button_number = int(button.objectName().split('_')[1])
         
@@ -137,9 +133,7 @@ class ControlWindow(QtWidgets.QMainWindow):
         json_data = {"valve_mode": valve_mode, "individual_valves": individual_valves}
         json = self.obtener_json_base("valve", json_data)
         self.client.send_json(json)
-        # Realiza la acción deseada dependiendo del botón presionado
-        print(f'Activando válvula para el botón {valve_number}: {output_number}')
-        # Aquí puedes agregar el código para activar la válvula correspondiente
+        print(individual_valves)
 
 #TODO: ==================================== Control de Luces ====================================
         #* Conectar sliders para escuchar cambios en tiempo real
@@ -160,25 +154,21 @@ class ControlWindow(QtWidgets.QMainWindow):
             # Conectar al puerto serie de Arduino
             if not hasattr(self, 'arduino') or self.arduino.is_open == False:
                 self.arduino = serial.Serial("COM4", 9600, timeout=1)
-
             # Leer los valores actuales de los sliders
             intensidad1 = self.ui.QS_iluminacion.value()
             intensidad2 = self.ui.QS_iluminacion_2.value()
             intensidad3 = self.ui.QS_iluminacion_3.value()
             intensidad4 = self.ui.QS_iluminacion_4.value()
-
             # Mostrar los valores actualizados en las etiquetas
             self.ui.L_iluminacion.setText(f'{intensidad1} %')
             self.ui.L_iluminacion_2.setText(f'{intensidad2} %')
             self.ui.L_iluminacion_3.setText(f'{intensidad3} %')
             self.ui.L_iluminacion_4.setText(f'{intensidad4} %')
-            
             # Convertir los valores a un rango de 0 a 255
             intensidad1 = int((intensidad1 / 100) * 255)
             intensidad2 = int((intensidad2 / 100) * 255)
             intensidad3 = int((intensidad3 / 100) * 255)
             intensidad4 = int((intensidad4 / 100) * 255)
-
             # Crear el comando en formato CSV
             comando = f"{intensidad1},{intensidad2},{intensidad3},{intensidad4}\n"
             self.arduino.write(comando.encode())  # Enviar comando a Arduino
@@ -189,28 +179,27 @@ class ControlWindow(QtWidgets.QMainWindow):
 
         except serial.SerialException as e:
             print(f"Error al conectar con Arduino: {e}")
-        
+    
+    #* Detecta cuando el ratón es presionado sobre el frame de la cabecera
     def mousePressEvent(self, event):
-        """Detecta cuando el ratón es presionado sobre el frame de la cabecera."""
         if event.button() == QtCore.Qt.LeftButton:
             self.is_dragging = True
             self.offset = event.globalPos() - self.pos()
             event.accept()
 
+    #* Mueve la ventana solo cuando el ratón está presionado
     def mouseMoveEvent(self, event):
-        """Mueve la ventana solo cuando el ratón está presionado."""
         if self.is_dragging:
             self.move(event.globalPos() - self.offset)
             event.accept()
 
+    #* Deja de mover la ventana cuando se suelta el clic del ratón
     def mouseReleaseEvent(self, event):
-        """Deja de mover la ventana cuando se suelta el clic del ratón."""
         if event.button() == QtCore.Qt.LeftButton:
             self.is_dragging = False
             event.accept()
 
     def close(self):
-        print("Cerrando ventana de control")
         super().close()
     
     #* oculta el menú lateral
@@ -230,8 +219,8 @@ class ControlWindow(QtWidgets.QMainWindow):
         """Función personalizada para minimizar la ventana"""
         self.setWindowState(self.windowState() | QtCore.Qt.WindowMinimized)
 
+    #* Alterna entre maximizar y restaurar
     def toggle_maximization(self):
-        """Alterna entre maximizar y restaurar."""
         if self.isMaximized():
             self.showNormal()
         else:
@@ -274,7 +263,6 @@ class ControlWindow(QtWidgets.QMainWindow):
         self.emergency_active = not self.emergency_active
 
         if self.emergency_active:
-            print("Parado de emergencia activado")
             self.ui.PB_EMER.setIcon(QIcon("src/Iconos/Detener.png"))
             self.ui.set_gif_visibility(True)
             
@@ -293,9 +281,11 @@ class ControlWindow(QtWidgets.QMainWindow):
             self.ui.PB_banda.setEnabled(False)
             self.ui.PB_saranda.setEnabled(False)
             self.ui.PB_test.setEnabled(False)
-            
             # Setear Beta Siempre
-            
+            if self.ui.label.text() == "Modo: Grabar Video" or self.ui.label.text() == "Modo: Grabar Video Desactivado":
+                self.ui.label.setText("Modo: Grabar Video Activado...")
+            else:
+                self.ui.label.setText("Modo: Tiempo Real Activado...")
             json = self.obtener_json_base(
                 "camera",
                 {
@@ -307,12 +297,10 @@ class ControlWindow(QtWidgets.QMainWindow):
                     "is_predicting": True,
                 },
             )
-            
+
             self.client.send_json(json)
-                
-            
+
         else:
-            print("Parado de emergencia desactivado")
             self.ui.PB_EMER.setIcon(QIcon("src/Iconos/Start.png"))
             self.ui.set_gif_visibility(False)
             
@@ -332,17 +320,31 @@ class ControlWindow(QtWidgets.QMainWindow):
             self.ui.PB_saranda.setEnabled(True)
             self.ui.PB_test.setEnabled(True)
             
-    def extraccion_video_player(self):
-        print(" Activación de la camara ")
-        
+            if self.ui.label.text() == "Modo: Tiempo Real Activado...":
+                self.ui.label.setText("Modo: Tiempo Real Desactivado...")
+            elif self.ui.label.text() == "Modo: Grabar Video Activado...":
+                self.ui.label.setText("Modo: Grabar Video Desactivado")
+            
+            json = self.obtener_json_base(
+                "camera",
+                {
+                    "is_ejecting": False,
+                    "is_predicting": False,
+                },
+            )
+
+            self.client.send_json(json)
+            
     def toggle_camera(self):
-        
         if self.ui.CB_Camaras.isChecked():
-            print("Cámara activa")
-            self.activate_camera()
+            self.ui.label.setText("Modo: Grabar Video")
+            # print("Cámara activa")
+            # self.activate_camera()
         else:
-            print("Cámara desactivada")
-            self.deactivate_camera()
+            self.ui.label.setText("Camara #1")
+            # print("Cámara desactivada")
+            
+            # self.deactivate_camera()
     
     def activate_camera(self):
         self.capture = cv2.VideoCapture(0)
@@ -361,22 +363,17 @@ class ControlWindow(QtWidgets.QMainWindow):
         ret, frame = self.capture.read()
         if ret:
             frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            
             height, width, channels = frame_rgb.shape
             bytes_per_line = channels * width
             q_image = QImage(frame_rgb.data, width, height, bytes_per_line, QImage.Format_RGB888)
-            
             pixmap = QPixmap.fromImage(q_image)
             scene = QGraphicsScene()
             scene.addPixmap(pixmap)
             self.ui.graphicsView.setScene(scene)
-        
+
     def enviomessege(self, json):
         self.client.send_json(json)
 
-        """ Activación de las valvulas individual """
-    def process_todas_valve(self):        
-        """ Activa todas las valvulas de golpe"""
     #* Proceso para la activación de todas las valvulas
     def process_ciclos_valve(self):
         self.mode_active = 1
@@ -384,7 +381,6 @@ class ControlWindow(QtWidgets.QMainWindow):
         send_Json = Process(target=self.enviomessege, args=(json,))
         send_Json.start()
         send_Json.join()
-        # self.send_json_async(json, "cycle")
         print("Proceso de activación de todas las valvulas")
     
     def select_valve(self, valve_index):
