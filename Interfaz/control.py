@@ -233,28 +233,30 @@ class Control(object):
         self.verticalLayout_4.addWidget(self.label)
         self.graphicsView = QtWidgets.QGraphicsView(self.frame_7)
         
+        #* Creacion e insercion de video
         self.media_player = QMediaPlayer()
         self.video_widget = QVideoWidget()
         self.media_player.setVideoOutput(self.video_widget)
         
         self.graphicsView.setObjectName("graphicsView")
         self.video_widget.hide()
-        # self.verticalLayout_4.addWidget(self.graphicsView)
+        
+        self.verticalLayout_4.addWidget(self.graphicsView)
         self.verticalLayout_4.addWidget(self.video_widget)
         
-        # self.graphicsView.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-        # self.graphicsView.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-        # background_color = QtGui.QColor(38, 38, 38)  # Color gris claro (ajustalo como desees)
-        # self.graphicsView.setStyleSheet(f"background-color: {background_color.name()};")
-        # self.scene = QtWidgets.QGraphicsScene(self.graphicsView)
-        # self.graphicsView.setScene(self.scene)
-        # self.movie = QtGui.QMovie("src/Iconos/MaX2.gif")
-        # self.gif_item = QtWidgets.QGraphicsPixmapItem()
-        # self.scene.addItem(self.gif_item)
-        # self.gif_item.setVisible(False)
-        # self.movie.frameChanged.connect(self.update_gif)
-        # self.movie.start()
-        # self.graphicsView.setRenderHint(QtGui.QPainter.Antialiasing)
+        self.graphicsView.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.graphicsView.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        background_color = QtGui.QColor(38, 38, 38)  # Color gris claro (ajustalo como desees)
+        self.graphicsView.setStyleSheet(f"background-color: {background_color.name()};")
+        self.scene = QtWidgets.QGraphicsScene(self.graphicsView)
+        self.graphicsView.setScene(self.scene)
+        self.movie = QtGui.QMovie("src/Iconos/MaX2.gif")
+        self.gif_item = QtWidgets.QGraphicsPixmapItem()
+        self.scene.addItem(self.gif_item)
+        self.gif_item.setVisible(False)
+        self.movie.frameChanged.connect(self.update_gif)
+        self.movie.start()
+        self.graphicsView.setRenderHint(QtGui.QPainter.Antialiasing)
         
         
         self.horizontalLayout_5.addWidget(self.frame_7)
@@ -1539,13 +1541,16 @@ class Control(object):
     
     def set_gif_visibility(self, visible):
         self.gif_item.setVisible(visible)
-    
+        if visible:
+            self.video_widget.hide()  # Ocultar el video cuando se muestra el gif
+        else:
+            self.video_widget.show()  # Mostrar el video cuando el gif está oculto
+        
     def view_media_player(self):
         self.video_widget.show()
         self.media_content = QMediaContent(QtCore.QUrl.fromLocalFile("src/video/video.mp4"))
         self.media_player.setMedia(self.media_content)
         self.media_player.play()
-        """DISPLAY"""
         
 
 if __name__ == "__main__":

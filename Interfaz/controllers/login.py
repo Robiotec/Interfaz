@@ -265,7 +265,7 @@ class ControlWindow(QtWidgets.QMainWindow):
 
         if self.emergency_active:
             self.ui.PB_EMER.setIcon(QIcon("src/Iconos/Detener.png"))
-            # self.ui.set_gif_visibility(True)
+            self.ui.set_gif_visibility(True)
             
             self.ui.PB_beta.setEnabled(False)
             self.ui.PB_caja.setEnabled(False)
@@ -285,14 +285,15 @@ class ControlWindow(QtWidgets.QMainWindow):
             # Setear Beta Siempre
             if self.ui.label.text() == "Modo: Grabar Video" or self.ui.label.text() == "Modo: Grabar Video Desactivado":
                 self.ui.label.setText("Modo: Grabar Video Activado...")
+                self.ui.video_widget.hide()  # Ocultar el video cuando está en modo de emergencia
+                self.ui.set_gif_visibility(True)  
             else:
                 self.ui.label.setText("Modo: Tiempo Real Activado...")
+                self.ui.set_gif_visibility(True)
             json = self.obtener_json_base(
                 "camera",
                 {
-                    # "camera_id": [0, 1],
-                    # "is_grabbing": self.btn_grab_video.isChecked(),
-                    # "is_gridding": self.btn_activate_grid.isChecked(),
+
                     "is_grabbing": False,
                     "is_ejecting": True,
                     "selection": self.select,
@@ -304,7 +305,7 @@ class ControlWindow(QtWidgets.QMainWindow):
 
         else:
             self.ui.PB_EMER.setIcon(QIcon("src/Iconos/Start.png"))
-            # self.ui.set_gif_visibility(False)
+            self.ui.set_gif_visibility(False)
             
             self.ui.view_media_player()
             
