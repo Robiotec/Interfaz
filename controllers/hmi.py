@@ -49,7 +49,7 @@ class ControlWindow(QtWidgets.QMainWindow):
         self.ui.PB_EMER.clicked.connect(self.emergencia)
 
         self.ui.PB_ciclo.clicked.connect(
-            self.process_ciclos_valve
+            self.cycles_valves
         )  # Activa las valvulas por ciclo
 
         for i in range(1, 100):  # Del 1 al 99
@@ -289,10 +289,10 @@ class ControlWindow(QtWidgets.QMainWindow):
                 self.handle_video_response(response)
             else:
                 print("No se recibieron videos.")
-                self.media_player.stop()
+                self.ui.media_player.stop()
                 if self.ui.video_widget.parent():
                     self.ui.video_area.removeWidget(self.ui.video_widget)
-                    self.video_widget.hide()
+                    self.ui.video_widget.hide()
 
     def toggle_camera(self):
         if self.ui.cb_video_grab.isChecked():
@@ -349,9 +349,10 @@ class ControlWindow(QtWidgets.QMainWindow):
         self.client.send_json(json)
 
     # * Proceso para la activación de todas las valvulas
-    def process_ciclos_valve(self):
+    def cycles_valves(self):
         self.mode_active = 1
         json = self.obtener_json_base("valve", {"valve_mode": 1})
+        
         send_Json = Process(target=self.enviomessege, args=(json,))
         send_Json.start()
         send_Json.join()

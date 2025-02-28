@@ -1,7 +1,6 @@
 import json
 import socket
 
-from controllers.hmi import handle_video_response
 from services.worker import Worker
 
 
