@@ -10,6 +10,8 @@ from PyQt5.QtWidgets import QGraphicsScene
 from services.conect import SocketClient
 from control import Control 
 from config.credenciales import CORRECT_USERNAME, CORRECT_PASSWORD
+
+from services.worker import Worker
 # import cv2
 class LoginBack(QtWidgets.QWidget):
     def __init__(self, main_windows, username=None, password=None):
@@ -327,6 +329,9 @@ class ControlWindow(QtWidgets.QMainWindow):
             
             if self.ui.label.text() == "Modo: Tiempo Real Activado...":
                 self.ui.label.setText("Modo: Tiempo Real Desactivado...")
+                
+                self.send_json_async(json, "stop_video", handle_videos=True)
+                
             elif self.ui.label.text() == "Modo: Grabar Video Activado...":
                 self.ui.label.setText("Modo: Grabar Video Desactivado")
             
@@ -415,3 +420,13 @@ class ControlWindow(QtWidgets.QMainWindow):
             self.ui.PB_caja.setStyleSheet("background-color: #ff7400; border-radius: 5px;")
             self.ui.PB_beta.setStyleSheet("background-color: lightgray; border-radius: 3px;")
         # return self.select
+
+    def send_json_async(self, json, handle=None, handle_videos=False):
+        self.worker = Worker(self.client, json, handle_videos)
+        # if handle == "stop_video":
+        #     self.worker.response_received.connect(self.handle_video_response)
+        # elif handle == "cycle":
+        #     self.worker.response_received.connect(self.handle_cycle_response)
+        # elif handle == "stop_system":
+        #     self.worker.response_received.connect(self.handle_ose_response)
+        self.worker.start()
