@@ -1,6 +1,5 @@
 import os
 import sys
-from multiprocessing import Process
 
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import QSize, QTimer
@@ -48,15 +47,11 @@ class ControlWindow(QtWidgets.QMainWindow):
 
         self.ui.PB_EMER.clicked.connect(self.emergencia)
 
-        self.ui.PB_ciclo.clicked.connect(
-            self.cycles_valves
-        )  # Activa las valvulas por ciclo
+        self.ui.pb_cycle.clicked.connect(self.cycles_valves)
 
         for i in range(1, 100):  # Del 1 al 99
             button = getattr(self.ui, f"PB_{i}")  # Obtiene el botón usando getattr
             button.clicked.connect(self.activate_valve_individual)
-
-        self.ui.cb_video_grab.clicked.connect(self.toggle_camera)
 
         # Variables para manejar la captura y temporizador
         self.capture = None
@@ -91,16 +86,16 @@ class ControlWindow(QtWidgets.QMainWindow):
 
         # TODO: ==================================== Control de Luces ====================================
         # * Conectar sliders para escuchar cambios en tiempo real
-        self.ui.QS_iluminacion.valueChanged.connect(self.actualizar_intensidades)
-        self.ui.QS_iluminacion_2.valueChanged.connect(self.actualizar_intensidades)
-        self.ui.QS_iluminacion_3.valueChanged.connect(self.actualizar_intensidades)
-        self.ui.QS_iluminacion_4.valueChanged.connect(self.actualizar_intensidades)
+        # self.ui.QS_iluminacion.valueChanged.connect(self.actualizar_intensidades)
+        # self.ui.QS_iluminacion_2.valueChanged.connect(self.actualizar_intensidades)
+        # self.ui.QS_iluminacion_3.valueChanged.connect(self.actualizar_intensidades)
+        # self.ui.QS_iluminacion_4.valueChanged.connect(self.actualizar_intensidades)
 
-        # * Mostrar el porcentaje inicial de las Luces
-        self.ui.L_iluminacion.setText(f"{self.ui.QS_iluminacion.value()} %")
-        self.ui.L_iluminacion_2.setText(f"{self.ui.QS_iluminacion_2.value()} %")
-        self.ui.L_iluminacion_3.setText(f"{self.ui.QS_iluminacion_3.value()} %")
-        self.ui.L_iluminacion_4.setText(f"{self.ui.QS_iluminacion_4.value()} %")
+        # # * Mostrar el porcentaje inicial de las Luces
+        # self.ui.L_iluminacion.setText(f"{self.ui.QS_iluminacion.value()} %")
+        # self.ui.L_iluminacion_2.setText(f"{self.ui.QS_iluminacion_2.value()} %")
+        # self.ui.L_iluminacion_3.setText(f"{self.ui.QS_iluminacion_3.value()} %")
+        # self.ui.L_iluminacion_4.setText(f"{self.ui.QS_iluminacion_4.value()} %")
 
     def actualizar_intensidades(self):
         """Envía las intensidades a Arduino automáticamente al mover los sliders."""
@@ -220,6 +215,9 @@ class ControlWindow(QtWidgets.QMainWindow):
             )
             self.ui.view_media_player(video_path)
 
+    def handle_cycle_response(self, response):
+        print(f"Response from server: {response}")
+
     def set_enable_buttons(self, enable):
         self.ui.PB_beta.setEnabled(enable)
         self.ui.PB_caja.setEnabled(enable)
@@ -294,30 +292,6 @@ class ControlWindow(QtWidgets.QMainWindow):
                     self.ui.video_area.removeWidget(self.ui.video_widget)
                     self.ui.video_widget.hide()
 
-    def toggle_camera(self):
-        if self.ui.cb_video_grab.isChecked():
-            self.ui.label.setText("Modo: Grabar Video")
-
-            json = self.obtener_json_base(
-                "camera",
-                {
-                    # "camera_id": [0, 1],
-                    "is_grabbing": True,
-                    # "is_gridding": self.btn_activate_grid.isChecked(),
-                    # "is_ejecting": True,
-                    "selection": self.selection,
-                    # "is_predicting": True,
-                },
-            )
-            self.client.send_json(json)
-            # print("Cámara activa")
-            # self.activate_camera()
-        else:
-            self.ui.label.setText("Camara #1")
-            # print("Cámara desactivada")
-
-            # self.deactivate_camera()
-
     def activate_camera(self):
         self.capture = cv2.VideoCapture(0)
         if not self.capture.isOpened():
@@ -352,10 +326,9 @@ class ControlWindow(QtWidgets.QMainWindow):
     def cycles_valves(self):
         self.mode_active = 1
         json = self.obtener_json_base("valve", {"valve_mode": 1})
-        
-        send_Json = Process(target=self.enviomessege, args=(json,))
-        send_Json.start()
-        send_Json.join()
+        response = self.client.send_json_async(json, "cycle")
+        self.handle_cycle_response(response)
+
         print("Proceso de activación de todas las valvulas")
 
     def select_valve(self, valve_index):

@@ -192,7 +192,7 @@ QMainWindow{
         background-color: #323232;
     }
     
-    #PB_todas, #PB_ciclo{
+    #PB_todas, #pb_cycle{
         background-color: #ef5e03;
         color: black;
     }

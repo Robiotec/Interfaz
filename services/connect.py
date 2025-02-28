@@ -71,12 +71,8 @@ class SocketClient:
 
     def send_json_async(self, json, handle=None, handle_videos=False):
         self.worker = Worker(self.client, json, handle_videos)
-        if handle == "stop_video":
+        if handle in ["stop_video", "cycle", "stop_system"]:
             return self.worker.response_received
-        elif handle == "cycle":
-            self.worker.response_received.connect(self.handle_cycle_response)
-        elif handle == "stop_system":
-            self.worker.response_received.connect(self.handle_ose_response)
         self.worker.start()
 
     def close_connection(self):
