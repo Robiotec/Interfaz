@@ -536,7 +536,7 @@ QCheckBox::indicator:checked {
             </property>
             <property name="icon">
              <iconset>
-              <normaloff>Iconos/LoogoBlanco.png</normaloff>Iconos/LoogoBlanco.png</iconset>
+              <normaloff>icons/LoogoBlanco.png</normaloff>icons/LoogoBlanco.png</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -575,7 +575,7 @@ QCheckBox::indicator:checked {
             </property>
             <property name="icon">
              <iconset>
-              <normaloff>Iconos/Home.png</normaloff>Iconos/Home.png</iconset>
+              <normaloff>icons/Home.png</normaloff>icons/Home.png</iconset>
             </property>
            </widget>
           </item>
@@ -595,7 +595,7 @@ QCheckBox::indicator:checked {
             </property>
             <property name="icon">
              <iconset>
-              <normaloff>Iconos/Test.png</normaloff>Iconos/Test.png</iconset>
+              <normaloff>icons/Test.png</normaloff>icons/Test.png</iconset>
             </property>
            </widget>
           </item>
@@ -615,7 +615,7 @@ QCheckBox::indicator:checked {
             </property>
             <property name="icon">
              <iconset>
-              <normaloff>Iconos/Config.png</normaloff>Iconos/Config.png</iconset>
+              <normaloff>icons/Config.png</normaloff>icons/Config.png</iconset>
             </property>
            </widget>
           </item>
@@ -635,7 +635,7 @@ QCheckBox::indicator:checked {
             </property>
             <property name="icon">
              <iconset>
-              <normaloff>Iconos/Ayuda.png</normaloff>Iconos/Ayuda.png</iconset>
+              <normaloff>icons/Ayuda.png</normaloff>icons/Ayuda.png</iconset>
             </property>
            </widget>
           </item>
@@ -671,7 +671,7 @@ QCheckBox::indicator:checked {
             </property>
             <property name="icon">
              <iconset>
-              <normaloff>Iconos/1x/Apagar_3.png</normaloff>Iconos/1x/Apagar_3.png</iconset>
+              <normaloff>icons/1x/Apagar_3.png</normaloff>icons/1x/Apagar_3.png</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -837,7 +837,7 @@ QCheckBox::indicator:checked {
                       </property>
                       <property name="icon">
                        <iconset>
-                        <normaloff>Iconos/flecha_izquierda.png</normaloff>Iconos/flecha_izquierda.png</iconset>
+                        <normaloff>icons/flecha_izquierda.png</normaloff>icons/flecha_izquierda.png</iconset>
                       </property>
                      </widget>
                     </item>
@@ -961,7 +961,7 @@ QCheckBox::indicator:checked {
                       </property>
                       <property name="icon">
                        <iconset>
-                        <normaloff>Iconos/flecha_derecha.png</normaloff>Iconos/flecha_derecha.png</iconset>
+                        <normaloff>icons/flecha_derecha.png</normaloff>icons/flecha_derecha.png</iconset>
                       </property>
                      </widget>
                     </item>
@@ -1056,7 +1056,7 @@ QCheckBox::indicator:checked {
                     </property>
                     <property name="icon">
                      <iconset>
-                      <normaloff>Iconos/Caja.png</normaloff>Iconos/Caja.png</iconset>
+                      <normaloff>icons/Caja.png</normaloff>icons/Caja.png</iconset>
                     </property>
                     <property name="iconSize">
                      <size>
@@ -1095,7 +1095,7 @@ QCheckBox::indicator:checked {
                     </property>
                     <property name="icon">
                      <iconset>
-                      <normaloff>Iconos/Beta.png</normaloff>Iconos/Beta.png</iconset>
+                      <normaloff>icons/Beta.png</normaloff>icons/Beta.png</iconset>
                     </property>
                     <property name="iconSize">
                      <size>
@@ -1416,7 +1416,7 @@ QCheckBox::indicator:checked {
                     </property>
                     <property name="icon">
                      <iconset>
-                      <normaloff>Iconos/Start.png</normaloff>Iconos/Start.png</iconset>
+                      <normaloff>icons/Start.png</normaloff>icons/Start.png</iconset>
                     </property>
                     <property name="iconSize">
                      <size>
@@ -1468,7 +1468,7 @@ QCheckBox::indicator:checked {
               </property>
               <property name="icon">
                <iconset>
-                <normaloff>Iconos/Robiotec.svg</normaloff>Iconos/Robiotec.svg</iconset>
+                <normaloff>icons/Robiotec.svg</normaloff>icons/Robiotec.svg</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -2274,7 +2274,7 @@ QCheckBox::indicator:checked {
                          </property>
                          <property name="icon">
                           <iconset>
-                           <normaloff>Iconos/Ciclo.png</normaloff>Iconos/Ciclo.png</iconset>
+                           <normaloff>icons/Ciclo.png</normaloff>icons/Ciclo.png</iconset>
                          </property>
                          <property name="checkable">
                           <bool>false</bool>
@@ -2333,7 +2333,7 @@ QCheckBox::indicator:checked {
                          </property>
                          <property name="icon">
                           <iconset>
-                           <normaloff>Iconos/Todas.png</normaloff>Iconos/Todas.png</iconset>
+                           <normaloff>icons/Todas.png</normaloff>icons/Todas.png</iconset>
                          </property>
                         </widget>
                        </item>
