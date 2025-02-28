@@ -1,3 +1,5 @@
+import os
+
 from PyQt5 import QtCore
 
 class Worker(QtCore.QThread):
@@ -27,8 +29,11 @@ class Worker(QtCore.QThread):
         client_socket.sendall(b"NEXT")
 
     def run_videos(self):
-        self.receive_file(self.client.socket, "videos/camara_recived_1.mp4")
-        self.receive_file(self.client.socket, "videos/camara_recived_2.mp4")
+        if not os.path.exists("src/video"):
+            os.makedirs("src/video")
+        self.receive_file(self.client.socket, "src/video/camara_recived_1.mp4")
+
+        self.receive_file(self.client.socket, "src/video/camara_recived_2.mp4")
 
         data = self.client.socket.recv(4096)
         self.response_received.emit(data.decode("utf-8"))

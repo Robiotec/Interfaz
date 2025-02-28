@@ -360,20 +360,14 @@ class ControlWindow(QtWidgets.QMainWindow):
                 {
                     # "camera_id": [0, 1],
                     "is_grabbing": True,
-                    # "is_gridding": self.btn_activate_grid.isChecked(),
                     # "is_ejecting": True,
                     "selection": self.select,
                     # "is_predicting": True,
                 },
             )
             self.client.send_json(json)
-            # print("Cámara activa")
-            # self.activate_camera()
         else:
             self.ui.label.setText("Camara #1")
-            # print("Cámara desactivada")
-            
-            # self.deactivate_camera()
     
     def activate_camera(self):
         self.capture = cv2.VideoCapture(0)
@@ -429,10 +423,33 @@ class ControlWindow(QtWidgets.QMainWindow):
 
     def send_json_async(self, json, handle=None, handle_videos=False):
         self.worker = Worker(self.client, json, handle_videos)
-        # if handle == "stop_video":
-        #     self.worker.response_received.connect(self.handle_video_response)
-        # elif handle == "cycle":
-        #     self.worker.response_received.connect(self.handle_cycle_response)
-        # elif handle == "stop_system":
-        #     self.worker.response_received.connect(self.handle_ose_response)
+        if handle == "stop_video":
+            self.worker.response_received.connect(self.handle_video_response)
+        elif handle == "cycle":
+            self.worker.response_received.connect(self.handle_cycle_response)
+        elif handle == "stop_system":
+            self.worker.response_received.connect(self.handle_ose_response)
         self.worker.start()
+        
+    def handle_video_response(self, response):
+        print(f"Video response from server: {response}")
+        self.btn_activate_valves.setEnabled(True)
+        self.btn_activate_grid.setEnabled(True)
+        self.btn_grab_video.setEnabled(True)
+
+        if response == "sended_videos":
+            print("Todos los videos han sido recibidos con éxito.")
+            # video_path = os.path.join(self.script_dir, "videos", "camara_recived_2.mp4")
+            # self.play_video(video_path)
+    
+    def handle_cycle_response(self, response):
+        print(f"Response from server: {response}")
+        # self.status_message.setVisible(False)
+        # self.btn_mode_all.setEnabled(True)
+        # self.btn_mode_individual.setEnabled(True)
+        # self.btn_mode_cycle.setEnabled(True)
+        
+    def handle_ose_response(self, response):
+        print(f"Response from server: {response}")
+        # self.display_times(response)
+
