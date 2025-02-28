@@ -281,8 +281,8 @@ class ControlWindow(QtWidgets.QMainWindow):
             self.client.send_json(json)
 
             if self.ui.cb_video_grab.isChecked():
-                response = self.client.send_json_async( self.client,
-                    json, "stop_video", handle_videos=True
+                response = self.client.send_json_async(
+                    self.client, json, "stop_video", handle_videos=True
                 )
                 self.handle_video_response(response)
             else:
@@ -325,16 +325,12 @@ class ControlWindow(QtWidgets.QMainWindow):
     # * Proceso para la activación de todas las valvulas
     def cycles_valves(self):
         self.mode_active = 1
-        json_data = self.obtener_json_base("valve", {"valve_mode": 1})
-        signal = self.client.send_json_async(
-            json_data,
-            handle="cycle",
-            handle_videos=False
-        )
-        if signal: 
-            signal.connect(self.handle_cycle_response)
+        json = self.obtener_json_base("valve", {"valve_mode": 1})
 
-        print("Proceso de activación de todas las valvulas")
+        print("Activando todas las valvulas..." + str(json))
+        signal = self.client.send_json_async(json, handle="cycle", handle_videos=False)
+        if signal:
+            signal.connect(self.handle_cycle_response)
 
     def select_valve(self, valve_index):
         self.selected_valve = valve_index

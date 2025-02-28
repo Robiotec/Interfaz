@@ -1,20 +1,16 @@
-import threading
-
-from PyQt5.QtCore import QObject, pyqtSignal
+from PyQt5 import QtCore
 
 
-class Worker(QObject, threading.Thread):
-    response_received = pyqtSignal(str)
+class Worker(QtCore.QThread):
+    response_received = QtCore.pyqtSignal(str)
 
     def __init__(self, client, json_data, handle_videos=False):
-        QObject.__init__(self)
-        threading.Thread.__init__(self)
+        super().__init__()
         self.client = client
         self.json_data = json_data
         self.handle_videos = handle_videos
-        
+
     def run(self):
-        print("Worker thread started.")
         try:
             if self.handle_videos:
                 self.run_videos()
