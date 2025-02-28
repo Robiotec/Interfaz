@@ -865,7 +865,7 @@ QCheckBox::indicator:checked {
                    <property name="frameShadow">
                     <enum>QFrame::Shadow::Raised</enum>
                    </property>
-                   <layout class="QVBoxLayout" name="verticalLayout_4">
+                   <layout class="QVBoxLayout" name="video_area">
                     <property name="leftMargin">
                      <number>2</number>
                     </property>
@@ -1172,7 +1172,7 @@ QCheckBox::indicator:checked {
                      <string/>
                     </property>
                    </widget>
-                   <widget class="QCheckBox" name="checkBox_2">
+                   <widget class="QCheckBox" name="cb_valves">
                     <property name="geometry">
                      <rect>
                       <x>10</x>

@@ -7,12 +7,12 @@ class Control(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1024, 654)
-        #TODO: Eliminar bordes y botones del sistema
+        # TODO: Eliminar bordes y botones del sistema
         MainWindow.setWindowFlags(QtCore.Qt.FramelessWindowHint)
-        
+
         MainWindow.setMinimumSize(QtCore.QSize(1024, 0))
         MainWindow.setMaximumSize(QtCore.QSize(1024, 768))
-        MainWindow.setStyleSheet(self.stylos()) #* Inyect los Estylos
+        MainWindow.setStyleSheet(self.stylos())  # * Inyect los Estylos
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.centralwidget)
@@ -43,13 +43,17 @@ class Control(object):
         self.PB_menu.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.PB_menu.setText("")
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("src/icons/menu.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(
+            QtGui.QPixmap("src/icons/menu.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off
+        )
         self.PB_menu.setIcon(icon)
         self.PB_menu.setIconSize(QtCore.QSize(20, 20))
         self.PB_menu.setObjectName("PB_menu")
         self.horizontalLayout_2.addWidget(self.PB_menu)
         self.horizontalLayout.addWidget(self.frame)
-        spacerItem = QtWidgets.QSpacerItem(475, 20, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem = QtWidgets.QSpacerItem(
+            475, 20, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
+        )
         self.horizontalLayout.addItem(spacerItem)
         self.frame_2 = QtWidgets.QFrame(self.frame_cabecera)
         self.frame_2.setMaximumSize(QtCore.QSize(150, 16777215))
@@ -65,7 +69,11 @@ class Control(object):
         self.PB_minim.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.PB_minim.setText("")
         icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap("src/icons/Minimizar.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon1.addPixmap(
+            QtGui.QPixmap("src/icons/Minimizar.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         self.PB_minim.setIcon(icon1)
         self.PB_minim.setObjectName("PB_minim")
         self.horizontalLayout_3.addWidget(self.PB_minim)
@@ -74,7 +82,11 @@ class Control(object):
         self.PB_maxim.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.PB_maxim.setText("")
         icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap("src/icons/Maximizar.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon2.addPixmap(
+            QtGui.QPixmap("src/icons/Maximizar.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         self.PB_maxim.setIcon(icon2)
         self.PB_maxim.setObjectName("PB_maxim")
         self.horizontalLayout_3.addWidget(self.PB_maxim)
@@ -83,7 +95,9 @@ class Control(object):
         self.PB_cerrar.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.PB_cerrar.setText("")
         icon3 = QtGui.QIcon()
-        icon3.addPixmap(QtGui.QPixmap("src/icons/Cerrar.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon3.addPixmap(
+            QtGui.QPixmap("src/icons/Cerrar.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off
+        )
         self.PB_cerrar.setIcon(icon3)
         self.PB_cerrar.setObjectName("PB_cerrar")
         self.horizontalLayout_3.addWidget(self.PB_cerrar)
@@ -114,18 +128,26 @@ class Control(object):
         self.PB_logo2.setMaximumSize(QtCore.QSize(16777215, 150))
         self.PB_logo2.setText("")
         icon4 = QtGui.QIcon()
-        icon4.addPixmap(QtGui.QPixmap("src/icons/LoogoBlanco.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon4.addPixmap(
+            QtGui.QPixmap("src/icons/LoogoBlanco.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         self.PB_logo2.setIcon(icon4)
         self.PB_logo2.setIconSize(QtCore.QSize(180, 180))
         self.PB_logo2.setObjectName("PB_logo2")
         self.verticalLayout_7.addWidget(self.PB_logo2)
-        spacerItem1 = QtWidgets.QSpacerItem(20, 79, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem1 = QtWidgets.QSpacerItem(
+            20, 79, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
+        )
         self.verticalLayout_7.addItem(spacerItem1)
         self.PB_produc = QtWidgets.QPushButton(self.frame_menucontroles)
         self.PB_produc.setMinimumSize(QtCore.QSize(0, 50))
         self.PB_produc.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         icon5 = QtGui.QIcon()
-        icon5.addPixmap(QtGui.QPixmap("src/icons/Home.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon5.addPixmap(
+            QtGui.QPixmap("src/icons/Home.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off
+        )
         self.PB_produc.setIcon(icon5)
         self.PB_produc.setObjectName("PB_produc")
         self.verticalLayout_7.addWidget(self.PB_produc)
@@ -133,7 +155,9 @@ class Control(object):
         self.PB_test.setMinimumSize(QtCore.QSize(0, 50))
         self.PB_test.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         icon6 = QtGui.QIcon()
-        icon6.addPixmap(QtGui.QPixmap("src/icons/Test.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon6.addPixmap(
+            QtGui.QPixmap("src/icons/Test.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off
+        )
         self.PB_test.setIcon(icon6)
         self.PB_test.setObjectName("PB_test")
         self.verticalLayout_7.addWidget(self.PB_test)
@@ -141,7 +165,9 @@ class Control(object):
         self.PB_config.setMinimumSize(QtCore.QSize(0, 50))
         self.PB_config.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         icon7 = QtGui.QIcon()
-        icon7.addPixmap(QtGui.QPixmap("src/icons/Config.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon7.addPixmap(
+            QtGui.QPixmap("src/icons/Config.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off
+        )
         self.PB_config.setIcon(icon7)
         self.PB_config.setObjectName("PB_config")
         self.verticalLayout_7.addWidget(self.PB_config)
@@ -149,18 +175,26 @@ class Control(object):
         self.PB_ayuda.setMinimumSize(QtCore.QSize(0, 50))
         self.PB_ayuda.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         icon8 = QtGui.QIcon()
-        icon8.addPixmap(QtGui.QPixmap("src/icons/Ayuda.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon8.addPixmap(
+            QtGui.QPixmap("src/icons/Ayuda.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off
+        )
         self.PB_ayuda.setIcon(icon8)
         self.PB_ayuda.setObjectName("PB_ayuda")
         self.verticalLayout_7.addWidget(self.PB_ayuda)
-        spacerItem2 = QtWidgets.QSpacerItem(20, 76, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem2 = QtWidgets.QSpacerItem(
+            20, 76, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
+        )
         self.verticalLayout_7.addItem(spacerItem2)
         self.PB_apagar = QtWidgets.QPushButton(self.frame_menucontroles)
         self.PB_apagar.setMinimumSize(QtCore.QSize(0, 50))
         self.PB_apagar.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.PB_apagar.setStyleSheet("")
         icon9 = QtGui.QIcon()
-        icon9.addPixmap(QtGui.QPixmap("src/icons/1x/Apagar_3.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon9.addPixmap(
+            QtGui.QPixmap("src/icons/1x/Apagar_3.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         self.PB_apagar.setIcon(icon9)
         self.PB_apagar.setIconSize(QtCore.QSize(120, 30))
         self.PB_apagar.setObjectName("PB_apagar")
@@ -202,7 +236,9 @@ class Control(object):
         self.verticalLayout_5.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_5.setSpacing(0)
         self.verticalLayout_5.setObjectName("verticalLayout_5")
-        spacerItem3 = QtWidgets.QSpacerItem(20, 153, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem3 = QtWidgets.QSpacerItem(
+            20, 153, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
+        )
         self.verticalLayout_5.addItem(spacerItem3)
         self.PB_left = QtWidgets.QPushButton(self.frame_izquierdo)
         self.PB_left.setMinimumSize(QtCore.QSize(50, 50))
@@ -211,42 +247,50 @@ class Control(object):
         self.PB_left.setLayoutDirection(QtCore.Qt.LeftToRight)
         self.PB_left.setText("")
         icon10 = QtGui.QIcon()
-        icon10.addPixmap(QtGui.QPixmap("src/icons/flecha_izquierda.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon10.addPixmap(
+            QtGui.QPixmap("src/icons/flecha_izquierda.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         self.PB_left.setIcon(icon10)
         self.PB_left.setObjectName("PB_left")
         self.verticalLayout_5.addWidget(self.PB_left)
-        spacerItem4 = QtWidgets.QSpacerItem(20, 153, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem4 = QtWidgets.QSpacerItem(
+            20, 153, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
+        )
         self.verticalLayout_5.addItem(spacerItem4)
         self.horizontalLayout_5.addWidget(self.frame_izquierdo)
         self.frame_7 = QtWidgets.QFrame(self.frame_3)
         self.frame_7.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_7.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_7.setObjectName("frame_7")
-        self.verticalLayout_4 = QtWidgets.QVBoxLayout(self.frame_7)
-        self.verticalLayout_4.setContentsMargins(2, 2, 2, 0)
-        self.verticalLayout_4.setObjectName("verticalLayout_4")
+        self.video_area = QtWidgets.QVBoxLayout(self.frame_7)
+        self.video_area.setContentsMargins(2, 2, 2, 0)
+        self.video_area.setObjectName("video_area")
         self.label = QtWidgets.QLabel(self.frame_7)
         font = QtGui.QFont()
         font.setPointSize(12)
         self.label.setFont(font)
         self.label.setObjectName("label")
-        self.verticalLayout_4.addWidget(self.label)
+        self.video_area.addWidget(self.label)
         self.graphicsView = QtWidgets.QGraphicsView(self.frame_7)
-        
-        #* Creacion e insercion de video
+
+        # * Creacion e insercion de video
         self.media_player = QMediaPlayer()
         self.video_widget = QVideoWidget()
         self.media_player.setVideoOutput(self.video_widget)
-        
+
         self.graphicsView.setObjectName("graphicsView")
         self.video_widget.hide()
-        
-        self.verticalLayout_4.addWidget(self.graphicsView)
-        self.verticalLayout_4.addWidget(self.video_widget)
-        
+
+        self.video_area.addWidget(self.graphicsView)
+        self.video_area.addWidget(self.video_widget)
+
         self.graphicsView.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self.graphicsView.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-        background_color = QtGui.QColor(38, 38, 38)  # Color gris claro (ajustalo como desees)
+        background_color = QtGui.QColor(
+            38, 38, 38
+        )  # Color gris claro (ajustalo como desees)
         self.graphicsView.setStyleSheet(f"background-color: {background_color.name()};")
         self.scene = QtWidgets.QGraphicsScene(self.graphicsView)
         self.graphicsView.setScene(self.scene)
@@ -257,8 +301,7 @@ class Control(object):
         self.movie.frameChanged.connect(self.update_gif)
         self.movie.start()
         self.graphicsView.setRenderHint(QtGui.QPainter.Antialiasing)
-        
-        
+
         self.horizontalLayout_5.addWidget(self.frame_7)
         self.frame_derecho = QtWidgets.QFrame(self.frame_3)
         self.frame_derecho.setMaximumSize(QtCore.QSize(62, 16777215))
@@ -269,7 +312,9 @@ class Control(object):
         self.verticalLayout_6.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_6.setSpacing(0)
         self.verticalLayout_6.setObjectName("verticalLayout_6")
-        spacerItem5 = QtWidgets.QSpacerItem(20, 153, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem5 = QtWidgets.QSpacerItem(
+            20, 153, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
+        )
         self.verticalLayout_6.addItem(spacerItem5)
         self.PB_right = QtWidgets.QPushButton(self.frame_derecho)
         self.PB_right.setMinimumSize(QtCore.QSize(50, 50))
@@ -277,11 +322,17 @@ class Control(object):
         self.PB_right.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.PB_right.setText("")
         icon11 = QtGui.QIcon()
-        icon11.addPixmap(QtGui.QPixmap("src/icons/flecha_derecha.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon11.addPixmap(
+            QtGui.QPixmap("src/icons/flecha_derecha.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         self.PB_right.setIcon(icon11)
         self.PB_right.setObjectName("PB_right")
         self.verticalLayout_6.addWidget(self.PB_right)
-        spacerItem6 = QtWidgets.QSpacerItem(20, 153, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem6 = QtWidgets.QSpacerItem(
+            20, 153, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
+        )
         self.verticalLayout_6.addItem(spacerItem6)
         self.horizontalLayout_5.addWidget(self.frame_derecho)
         self.horizontalLayout_5.setStretch(0, 1)
@@ -310,7 +361,9 @@ class Control(object):
         self.PB_caja.setGeometry(QtCore.QRect(10, 150, 61, 61))
         self.PB_caja.setText("")
         icon12 = QtGui.QIcon()
-        icon12.addPixmap(QtGui.QPixmap("src/icons/Caja.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon12.addPixmap(
+            QtGui.QPixmap("src/icons/Caja.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off
+        )
         self.PB_caja.setIcon(icon12)
         self.PB_caja.setIconSize(QtCore.QSize(50, 50))
         self.PB_caja.setObjectName("PB_caja")
@@ -323,7 +376,9 @@ class Control(object):
         self.PB_beta.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.PB_beta.setText("")
         icon13 = QtGui.QIcon()
-        icon13.addPixmap(QtGui.QPixmap("src/icons/Beta.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon13.addPixmap(
+            QtGui.QPixmap("src/icons/Beta.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off
+        )
         self.PB_beta.setIcon(icon13)
         self.PB_beta.setIconSize(QtCore.QSize(50, 50))
         self.PB_beta.setObjectName("PB_beta")
@@ -343,19 +398,19 @@ class Control(object):
         self.checkBox_3.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.checkBox_3.setText("")
         self.checkBox_3.setObjectName("checkBox_3")
-        self.CB_Camaras = QtWidgets.QCheckBox(self.frame_20)
-        self.CB_Camaras.setGeometry(QtCore.QRect(10, 60, 121, 50))
-        self.CB_Camaras.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.CB_Camaras.setText("")
-        self.CB_Camaras.setObjectName("CB_Camaras")
-        self.checkBox_2 = QtWidgets.QCheckBox(self.frame_20)
-        self.checkBox_2.setGeometry(QtCore.QRect(10, 120, 121, 40))
+        self.cb_video_grab = QtWidgets.QCheckBox(self.frame_20)
+        self.cb_video_grab.setGeometry(QtCore.QRect(10, 60, 121, 50))
+        self.cb_video_grab.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.cb_video_grab.setText("")
+        self.cb_video_grab.setObjectName("CB_Camaras")
+        self.cb_valves = QtWidgets.QCheckBox(self.frame_20)
+        self.cb_valves.setGeometry(QtCore.QRect(10, 120, 121, 40))
         font = QtGui.QFont()
         font.setBold(False)
-        self.checkBox_2.setFont(font)
-        self.checkBox_2.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.checkBox_2.setText("")
-        self.checkBox_2.setObjectName("checkBox_2")
+        self.cb_valves.setFont(font)
+        self.cb_valves.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.cb_valves.setText("")
+        self.cb_valves.setObjectName("cb_valves")
         self.checkBox_4 = QtWidgets.QCheckBox(self.frame_20)
         self.checkBox_4.setGeometry(QtCore.QRect(140, 60, 121, 40))
         self.checkBox_4.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
@@ -433,7 +488,9 @@ class Control(object):
         self.PB_EMER.setStyleSheet("background-color: transparent;")
         self.PB_EMER.setText("")
         icon14 = QtGui.QIcon()
-        icon14.addPixmap(QtGui.QPixmap("src/icons/Start.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon14.addPixmap(
+            QtGui.QPixmap("src/icons/Start.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off
+        )
         self.PB_EMER.setIcon(icon14)
         self.PB_EMER.setIconSize(QtCore.QSize(200, 200))
         self.PB_EMER.setObjectName("PB_EMER")
@@ -455,7 +512,9 @@ class Control(object):
         self.pushButton.setStyleSheet("background-color: transparent;")
         self.pushButton.setText("")
         icon15 = QtGui.QIcon()
-        icon15.addPixmap(QtGui.QPixmap("src/icons/Robiotec.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon15.addPixmap(
+            QtGui.QPixmap("src/icons/Robiotec.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off
+        )
         self.pushButton.setIcon(icon15)
         self.pushButton.setIconSize(QtCore.QSize(350, 350))
         self.pushButton.setObjectName("pushButton")
@@ -748,7 +807,9 @@ class Control(object):
         self.PB_ciclo.setFont(font)
         self.PB_ciclo.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         icon16 = QtGui.QIcon()
-        icon16.addPixmap(QtGui.QPixmap("src/icons/Ciclo.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon16.addPixmap(
+            QtGui.QPixmap("src/icons/Ciclo.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off
+        )
         self.PB_ciclo.setIcon(icon16)
         self.PB_ciclo.setCheckable(False)
         self.PB_ciclo.setAutoRepeat(False)
@@ -771,7 +832,9 @@ class Control(object):
         self.PB_todas.setFont(font)
         self.PB_todas.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         icon17 = QtGui.QIcon()
-        icon17.addPixmap(QtGui.QPixmap("src/icons/Todas.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon17.addPixmap(
+            QtGui.QPixmap("src/icons/Todas.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off
+        )
         self.PB_todas.setIcon(icon17)
         self.PB_todas.setObjectName("PB_todas")
         self.verticalLayout_13.addWidget(self.PB_todas)
@@ -1391,7 +1454,9 @@ class Control(object):
         self.PB_ayuda.setText(_translate("MainWindow", " Ayuda"))
         self.PB_apagar.setText(_translate("MainWindow", "  APAGAR"))
         self.label.setText(_translate("MainWindow", "Camara #1"))
-        self.label_8.setText(_translate("MainWindow", "Selecciona lo que quieres procesar"))
+        self.label_8.setText(
+            _translate("MainWindow", "Selecciona lo que quieres procesar")
+        )
         self.label_11.setText(_translate("MainWindow", "0"))
         self.label_9.setText(_translate("MainWindow", "# de Betas:"))
         self.label_10.setText(_translate("MainWindow", "# de Cajas:"))
@@ -1532,32 +1597,35 @@ class Control(object):
         except:
             print("No cargo el archivo")
             return ""
-        
+
     def update_gif(self):
         self.gif_item.setPixmap(self.movie.currentPixmap())
-        
+
         self.graphicsView.setRenderHint(QtGui.QPainter.Antialiasing)
         self.graphicsView.centerOn(self.gif_item)
-    
+
     def set_gif_visibility(self, visible):
         self.gif_item.setVisible(visible)
         if visible:
             self.video_widget.hide()  # Ocultar el video cuando se muestra el gif
         else:
             self.video_widget.show()  # Mostrar el video cuando el gif está oculto
-        
-    def view_media_player(self):
+
+    def view_media_player(self, path):
         self.video_widget.show()
-        self.media_content = QMediaContent(QtCore.QUrl.fromLocalFile("src/videos/video.mp4"))
+        self.media_content = QMediaContent(
+            QtCore.QUrl.fromLocalFile(path)
+        )
         self.media_player.setMedia(self.media_content)
         self.media_player.play()
-        
+
 
 if __name__ == "__main__":
     import sys
+
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
+    ui = Control()
     ui.setupUi(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())

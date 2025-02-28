@@ -1,6 +1,9 @@
-import socket
 import json
-import os
+import socket
+
+from controllers.hmi import handle_video_response
+from services.worker import Worker
+
 
 class SocketClient:
     def __init__(self, host: str, port: int):
@@ -14,14 +17,16 @@ class SocketClient:
             self.socket.connect((self.host, self.port))
             print(f"Connected to {self.host}:{self.port}")
         except ConnectionRefusedError:
-            print(f"Could not connect to {self.host}:{self.port}. The server might not be running.")
+            print(
+                f"Could not connect to {self.host}:{self.port}. The server might not be running."
+            )
         except Exception as e:
             print(f"An error occurred while trying to connect: {e}")
 
     def send_message(self, message: str):
         try:
             if self.socket:
-                self.socket.sendall(message.encode('utf-8'))
+                self.socket.sendall(message.encode("utf-8"))
             else:
                 print("Error: Not connected to the server.")
         except Exception as e:
@@ -31,7 +36,7 @@ class SocketClient:
         try:
             if self.socket:
                 response = self.socket.recv(1024)
-                response_str = response.decode('utf-8')
+                response_str = response.decode("utf-8")
                 return response_str
             else:
                 print("Error: Not connected to the server.")
@@ -43,7 +48,7 @@ class SocketClient:
     def receive_file(self, file_path: str):
         try:
             if self.socket:
-                with open(file_path, 'wb') as file:
+                with open(file_path, "wb") as file:
                     while True:
                         data = self.socket.recv(1024)
                         if not data:
@@ -64,6 +69,16 @@ class SocketClient:
         except Exception as e:
             print(f"An error occurred while sending the JSON: {e}")
             return ""
+
+    def send_json_async(self, json, handle=None, handle_videos=False):
+        self.worker = Worker(self.client, json, handle_videos)
+        if handle == "stop_video":
+            return self.worker.response_received
+        elif handle == "cycle":
+            self.worker.response_received.connect(self.handle_cycle_response)
+        elif handle == "stop_system":
+            self.worker.response_received.connect(self.handle_ose_response)
+        self.worker.start()
 
     def close_connection(self):
         if self.socket:
