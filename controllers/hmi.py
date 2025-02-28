@@ -27,6 +27,7 @@ class ControlWindow(QtWidgets.QMainWindow):
         self.ui.PB_ayuda.clicked.connect(self.ayuda)
         self.ui.PB_apagar.clicked.connect(self.salir)
 
+        self.script_dir =  os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         self.system_active = False
         self.mode_active = 0
         self.selected_valve = None
@@ -211,7 +212,7 @@ class ControlWindow(QtWidgets.QMainWindow):
         if response == "sended_videos":
             print("Todos los videos han sido recibidos con éxito.")
             video_path = os.path.join(
-                self.script_dir, "src/videos", "camara_recived_2.mp4"
+                self.script_dir, "src","videos", "camara_recived_2.mp4"
             )
             self.ui.view_media_player(video_path)
 
@@ -281,10 +282,10 @@ class ControlWindow(QtWidgets.QMainWindow):
             self.client.send_json(json)
 
             if self.ui.cb_video_grab.isChecked():
-                response = self.client.send_json_async(
-                    self.client, json, "stop_video", handle_videos=True
-                )
-                self.handle_video_response(response)
+                self.client.send_json_async(
+                    hmi=self, json_data=json, handle="stop_video", handle_videos=True
+            )
+            
             else:
                 print("No se recibieron videos.")
                 self.ui.media_player.stop()

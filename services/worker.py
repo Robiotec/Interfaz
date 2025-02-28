@@ -39,8 +39,8 @@ class Worker(QtCore.QThread):
 
     def run_videos(self):
         try:
-            self.receive_file(self.client.socket, "videos/camara_recived_1.mp4")
-            self.receive_file(self.client.socket, "videos/camara_recived_2.mp4")
+            self.receive_file(self.client.socket, "src/videos/camara_recived_1.mp4")
+            self.receive_file(self.client.socket, "src/videos/camara_recived_2.mp4")
 
             data = self.client.socket.recv(4096)
             self.response_received.emit(data.decode("utf-8"))
