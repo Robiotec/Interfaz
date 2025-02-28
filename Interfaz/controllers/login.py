@@ -8,7 +8,7 @@ from PyQt5.QtGui import QImage, QPixmap, QIcon, QMovie
 from PyQt5.QtWidgets import QGraphicsScene
 
 from services.conect import SocketClient
-from control import Control 
+from views.control import Control 
 from config.credenciales import CORRECT_USERNAME, CORRECT_PASSWORD
 
 from services.worker import Worker
@@ -330,6 +330,12 @@ class ControlWindow(QtWidgets.QMainWindow):
             if self.ui.label.text() == "Modo: Tiempo Real Activado...":
                 self.ui.label.setText("Modo: Tiempo Real Desactivado...")
                 
+                json = self.obtener_json_base(
+                    "stop_camera",
+                    {"is_grabbing": False, "is_gridding": False, "is_predicting": False},
+                )
+                print("Sending stop camera request...")
+                self.client.send_json(json)
                 self.send_json_async(json, "stop_video", handle_videos=True)
                 
             elif self.ui.label.text() == "Modo: Grabar Video Activado...":
