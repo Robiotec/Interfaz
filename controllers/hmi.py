@@ -322,15 +322,13 @@ class ControlWindow(QtWidgets.QMainWindow):
     def enviomessege(self, json):
         self.client.send_json(json)
 
-    # * Proceso para la activación de todas las valvulas
     def cycles_valves(self):
         self.mode_active = 1
         json = self.obtener_json_base("valve", {"valve_mode": 1})
-
         print("Activando todas las valvulas..." + str(json))
-        signal = self.client.send_json_async(json, handle="cycle", handle_videos=False)
-        if signal:
-            signal.connect(self.handle_cycle_response)
+        self.client.send_json_async(
+            hmi=self, json_data=json, handle="cycle", handle_videos=False
+        )
 
     def select_valve(self, valve_index):
         self.selected_valve = valve_index

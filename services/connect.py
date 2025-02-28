@@ -69,15 +69,20 @@ class SocketClient:
             print(f"An error occurred while sending the JSON: {e}")
             return ""
 
-    def send_json_async(self, json_data, handle=None, handle_videos=False):
+    def send_json_async(self, hmi, json_data, handle=None, handle_videos=False):
         try:
             worker = Worker(self, json_data, handle_videos)
             self.worker = worker
+
+            if handle == "stop_video":
+                self.worker.response_received.connect(hmi.handle_video_response)
+            elif handle == "cycle":
+                self.worker.response_received.connect(hmi.handle_cycle_response)
+            elif handle == "stop_system":
+                self.worker.response_received.connect(hmi.handle_ose_response)
+
             worker.finished.connect(lambda: self.cleanup_worker())
             worker.start()
-
-            if handle in ["stop_video", "cycle", "stop_system"]:
-                return worker.response_received
         except Exception as e:
             print(f"Error en send_json_async: {e}")
 
