@@ -222,7 +222,7 @@ QCheckBox::indicator:checked {
 }
 
 /*Configuración de las paginas de Testeo*/
-#PB_todas, #PB_ciclo{
+#PB_todas, #pb_cycle{
 	background-color: #ef5e03;
 	color: black;
 }
@@ -865,7 +865,7 @@ QCheckBox::indicator:checked {
                    <property name="frameShadow">
                     <enum>QFrame::Shadow::Raised</enum>
                    </property>
-                   <layout class="QVBoxLayout" name="verticalLayout_4">
+                   <layout class="QVBoxLayout" name="video_area">
                     <property name="leftMargin">
                      <number>2</number>
                     </property>
@@ -1172,7 +1172,7 @@ QCheckBox::indicator:checked {
                      <string/>
                     </property>
                    </widget>
-                   <widget class="QCheckBox" name="checkBox_2">
+                   <widget class="QCheckBox" name="cb_valves">
                     <property name="geometry">
                      <rect>
                       <x>10</x>
@@ -2253,7 +2253,7 @@ QCheckBox::indicator:checked {
                         <number>0</number>
                        </property>
                        <item>
-                        <widget class="QPushButton" name="PB_ciclo">
+                        <widget class="QPushButton" name="pb_cycle">
                          <property name="minimumSize">
                           <size>
                            <width>0</width>
