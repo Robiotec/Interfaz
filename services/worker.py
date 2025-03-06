@@ -3,12 +3,14 @@ from PyQt5 import QtCore
 
 class Worker(QtCore.QThread):
     response_received = QtCore.pyqtSignal(str)
+    cancel_requested = QtCore.pyqtSignal()
 
     def __init__(self, client, json_data, handle_videos=False):
         super().__init__()
         self.client = client
         self.json_data = json_data
         self.handle_videos = handle_videos
+        self._cancelled = False
 
     def run(self):
         try:
@@ -47,3 +49,7 @@ class Worker(QtCore.QThread):
         except Exception as e:
             print(f"Error in run_videos: {e}")
             self.response_received.emit(f"Error: {str(e)}")
+
+    def cancel(self):
+        self._cancelled = True
+        self.cancel_requested.emit()

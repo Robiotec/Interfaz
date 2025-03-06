@@ -4,7 +4,9 @@ import sys
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import QSize, QTimer
 from PyQt5.QtGui import QIcon, QImage, QPixmap
-from PyQt5.QtWidgets import QGraphicsScene
+from PyQt5.QtWidgets import QGraphicsScene, QApplication
+import cv2
+import serial
 
 from views.control import Control
 from services.connect import SocketClient
@@ -87,16 +89,16 @@ class ControlWindow(QtWidgets.QMainWindow):
 
         # TODO: ==================================== Control de Luces ====================================
         # * Conectar sliders para escuchar cambios en tiempo real
-        # self.ui.QS_iluminacion.valueChanged.connect(self.actualizar_intensidades)
-        # self.ui.QS_iluminacion_2.valueChanged.connect(self.actualizar_intensidades)
-        # self.ui.QS_iluminacion_3.valueChanged.connect(self.actualizar_intensidades)
-        # self.ui.QS_iluminacion_4.valueChanged.connect(self.actualizar_intensidades)
+        self.ui.QS_iluminacion.valueChanged.connect(self.actualizar_intensidades)
+        self.ui.QS_iluminacion_2.valueChanged.connect(self.actualizar_intensidades)
+        self.ui.QS_iluminacion_3.valueChanged.connect(self.actualizar_intensidades)
+        self.ui.QS_iluminacion_4.valueChanged.connect(self.actualizar_intensidades)
 
         # # * Mostrar el porcentaje inicial de las Luces
-        # self.ui.L_iluminacion.setText(f"{self.ui.QS_iluminacion.value()} %")
-        # self.ui.L_iluminacion_2.setText(f"{self.ui.QS_iluminacion_2.value()} %")
-        # self.ui.L_iluminacion_3.setText(f"{self.ui.QS_iluminacion_3.value()} %")
-        # self.ui.L_iluminacion_4.setText(f"{self.ui.QS_iluminacion_4.value()} %")
+        self.ui.L_iluminacion.setText(f"{self.ui.QS_iluminacion.value()} %")
+        self.ui.L_iluminacion_2.setText(f"{self.ui.QS_iluminacion_2.value()} %")
+        self.ui.L_iluminacion_3.setText(f"{self.ui.QS_iluminacion_3.value()} %")
+        self.ui.L_iluminacion_4.setText(f"{self.ui.QS_iluminacion_4.value()} %")
 
     def actualizar_intensidades(self):
         """Envía las intensidades a Arduino automáticamente al mover los sliders."""
@@ -255,14 +257,15 @@ class ControlWindow(QtWidgets.QMainWindow):
                 self.ui.label.setText("Modo: Tiempo Real Activado...")
                 self.ui.set_gif_visibility(True)
 
-            json = self.obtener_json_base(
+            json_data = self.obtener_json_base(
                 "camera",
                 {
                     "is_grabbing": self.ui.cb_video_grab.isChecked(),
                     "selection": self.selection,
                 },
             )
-            self.client.send_json(json)
+            # self.client.send_json(json)
+            self.client.send_json_async(self, json_data, handle="start_video" if self.ui.cb_video_grab.isChecked() else "start_realtime")
 
         else:
             self.ui.PB_EMER.setIcon(QIcon("src/icons/Start.png"))
@@ -274,24 +277,33 @@ class ControlWindow(QtWidgets.QMainWindow):
             elif self.ui.label.text() == "Modo: Grabar Video Activado...":
                 self.ui.label.setText("Modo: Grabar Video Desactivado")
 
-            json = self.obtener_json_base(
+            json_data = self.obtener_json_base(
                 "stop_camera",
                 {"is_grabbing": False, "is_gridding": False, "is_predicting": False},
             )
             print("Sending stop camera request...")
-            self.client.send_json(json)
+            # self.client.send_json(json)
 
-            if self.ui.cb_video_grab.isChecked():
-                self.client.send_json_async(
-                    hmi=self, json_data=json, handle="stop_video", handle_videos=True
-            )
+            self.client.send_json(json_data)
             
+            self.handle_stop_button()
+            
+            if self.ui.cb_video_grab.isChecked():
+                self.client.send_json_async(self, json_data, handle="stop_video", handle_videos=True)
             else:
-                print("No se recibieron videos.")
                 self.ui.media_player.stop()
-                if self.ui.video_widget.parent():
-                    self.ui.video_area.removeWidget(self.ui.video_widget)
-                    self.ui.video_widget.hide()
+                self.ui.video_widget.hide()
+            # if self.ui.cb_video_grab.isChecked():
+            #     self.client.send_json_async(
+            #         hmi=self, json_data=json, handle="stop_video", handle_videos=True
+            # )
+            
+            # else:
+            #     print("No se recibieron videos.")
+            #     self.ui.media_player.stop()
+            #     if self.ui.video_widget.parent():
+            #         self.ui.video_area.removeWidget(self.ui.video_widget)
+            #         self.ui.video_widget.hide()
 
     def activate_camera(self):
         self.capture = cv2.VideoCapture(0)
@@ -353,3 +365,8 @@ class ControlWindow(QtWidgets.QMainWindow):
                 "background-color: lightgray; border-radius: 3px;"
             )
         # return self.select
+    def handle_stop_button(self):
+        if hasattr(self, "worker") and self.worker.isRunning():
+            self.worker.cancel()
+            self.worker.wait()  # Asegura que el hilo haya terminado correctamente
+            print("El trabajador ha sido cancelado y detenido.")

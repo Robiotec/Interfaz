@@ -71,7 +71,7 @@ class Login(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         
         # Centrar ventana
-        screen_geometry = QtWidgets.QDesktopWidget().screenGeometry()
+        screen_geometry = QtWidgets.QApplication.primaryScreen().availableGeometry()
         window_geometry = MainWindow.geometry()
         x = (screen_geometry.width() - window_geometry.width()) // 2
         y = (screen_geometry.height() - window_geometry.height()) // 2
@@ -92,16 +92,20 @@ class Login(object):
             with open(url, "r", encoding="utf-8") as file:
                 css = file.read()
                 return css
+        except FileNotFoundError:
+            print(f"Archivo de estilo no encontrado: {url}")
+            return "/* Estilo por defecto */"
         except Exception as e:
             print(f"Error al cargar la hoja de estilo: {e}")
-            return ""
+            return "/* Error al cargar el estilo */"
+
 
 
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
+    login_sesion = QtWidgets.QMainWindow()
+    ui = Login()
+    ui.setupUi(login_sesion)
+    login_sesion.show()
     sys.exit(app.exec_())
