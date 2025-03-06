@@ -5,7 +5,6 @@ from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import QSize, QTimer
 from PyQt5.QtGui import QIcon, QImage, QPixmap
 from PyQt5.QtWidgets import QGraphicsScene, QApplication
-import cv2
 import serial
 
 from views.control import Control
@@ -239,7 +238,16 @@ class ControlWindow(QtWidgets.QMainWindow):
         self.ui.PB_test.setEnabled(enable)
 
     def emergencia(self):
+        
+        # Verificar si hay operaciones en curso y bloquear nuevas solicitudes mientras se procesa
+        if hasattr(self, "operacion_en_curso") and self.operacion_en_curso:
+            self.ui.label.setText("Procesando operación anterior, espere un momento...")
+            return
+        
         if not hasattr(self, "emergency_active"):
+            
+            self.operacion_en_curso = True
+            
             self.emergency_active = False
 
         self.emergency_active = not self.emergency_active
@@ -253,9 +261,11 @@ class ControlWindow(QtWidgets.QMainWindow):
                 self.ui.label.setText("Modo: Grabar Video Activado...")
                 self.ui.video_widget.hide()
                 self.ui.set_gif_visibility(True)
+                handle_type = "start_video"
             else:
                 self.ui.label.setText("Modo: Tiempo Real Activado...")
                 self.ui.set_gif_visibility(True)
+                handle_type = "start_realtime"
 
             json_data = self.obtener_json_base(
                 "camera",
@@ -265,7 +275,13 @@ class ControlWindow(QtWidgets.QMainWindow):
                 },
             )
             # self.client.send_json(json)
-            self.client.send_json_async(self, json_data, handle="start_video" if self.ui.cb_video_grab.isChecked() else "start_realtime")
+            # self.client.send_json_async(self, json_data, handle="start_video" if self.ui.cb_video_grab.isChecked() else "start_realtime")
+            self.client.send_json_async(
+                self,
+                json_data,
+                handle=handle_type,
+                callback=self.handle_start_complete
+            )
 
         else:
             self.ui.PB_EMER.setIcon(QIcon("src/icons/Start.png"))
@@ -283,16 +299,37 @@ class ControlWindow(QtWidgets.QMainWindow):
             )
             print("Sending stop camera request...")
             # self.client.send_json(json)
-
-            self.client.send_json(json_data)
             
             self.handle_stop_button()
+
+            # self.client.send_json(json_data)
             
             if self.ui.cb_video_grab.isChecked():
-                self.client.send_json_async(self, json_data, handle="stop_video", handle_videos=True)
+                self.client.send_json_async(
+                    self,
+                    json_data,
+                    handle="stop_video",
+                    handle_videos=True,
+                    callback=self.handle_stop_complete
+                )
             else:
                 self.ui.media_player.stop()
                 self.ui.video_widget.hide()
+                
+                # Enviar solicitud de detención al servidor
+                self.client.send_json_async(
+                    self,
+                    json_data,
+                    callback=self.handle_stop_complete
+                )
+            
+            # self.handle_stop_button()
+            
+            # if self.ui.cb_video_grab.isChecked():
+            #     self.client.send_json_async(self, json_data, handle="stop_video", handle_videos=True)
+            # else:
+            #     self.ui.media_player.stop()
+            #     self.ui.video_widget.hide()
             # if self.ui.cb_video_grab.isChecked():
             #     self.client.send_json_async(
             #         hmi=self, json_data=json, handle="stop_video", handle_videos=True
@@ -305,32 +342,44 @@ class ControlWindow(QtWidgets.QMainWindow):
             #         self.ui.video_area.removeWidget(self.ui.video_widget)
             #         self.ui.video_widget.hide()
 
-    def activate_camera(self):
-        self.capture = cv2.VideoCapture(0)
-        if not self.capture.isOpened():
-            print("No se pudo acceder a la cámara.")
-            return
-        self.timer.start(30)
+    # def activate_camera(self):
+    #     self.capture = cv2.VideoCapture(0)
+    #     if not self.capture.isOpened():
+    #         print("No se pudo acceder a la cámara.")
+    #         return
+    #     self.timer.start(30)
 
-    def deactivate_camera(self):
-        if self.capture:
-            self.capture.release()
-            self.capture = None
-        self.timer.stop()
+    # def deactivate_camera(self):
+    #     if self.capture:
+    #         self.capture.release()
+    #         self.capture = None
+    #     self.timer.stop()
 
-    def update_frame(self):
-        ret, frame = self.capture.read()
-        if ret:
-            frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            height, width, channels = frame_rgb.shape
-            bytes_per_line = channels * width
-            q_image = QImage(
-                frame_rgb.data, width, height, bytes_per_line, QImage.Format_RGB888
-            )
-            pixmap = QPixmap.fromImage(q_image)
-            scene = QGraphicsScene()
-            scene.addPixmap(pixmap)
-            self.ui.graphicsView.setScene(scene)
+    # def update_frame(self):
+    #     ret, frame = self.capture.read()
+    #     if ret:
+    #         frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    #         height, width, channels = frame_rgb.shape
+    #         bytes_per_line = channels * width
+    #         q_image = QImage(
+    #             frame_rgb.data, width, height, bytes_per_line, QImage.Format_RGB888
+    #         )
+    #         pixmap = QPixmap.fromImage(q_image)
+    #         scene = QGraphicsScene()
+    #         scene.addPixmap(pixmap)
+    #         self.ui.graphicsView.setScene(scene)
+    
+    def handle_start_complete(self, response):
+        """Callback para cuando se completa el inicio de la operación"""
+        print(f"Operación de inicio completada: {response}")
+        # Liberar el bloqueo de operación
+        self.operacion_en_curso = False
+
+    def handle_stop_complete(self, response):
+        """Callback para cuando se completa la detención de la operación"""
+        print(f"Operación de detención completada: {response}")
+        # Liberar el bloqueo de operación
+        self.operacion_en_curso = False
 
     def enviomessege(self, json):
         self.client.send_json(json)
@@ -368,5 +417,9 @@ class ControlWindow(QtWidgets.QMainWindow):
     def handle_stop_button(self):
         if hasattr(self, "worker") and self.worker.isRunning():
             self.worker.cancel()
-            self.worker.wait()  # Asegura que el hilo haya terminado correctamente
+            self.worker.finished.connect(self.on_worker_finished)
+            self.worker.wait()
             print("El trabajador ha sido cancelado y detenido.")
+            
+    def on_worker_finished(self):
+        print("El trabajador ha terminado su ejecución.")
