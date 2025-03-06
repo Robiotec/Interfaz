@@ -130,21 +130,26 @@ class SocketClient:
     
     def receive_file(self, file_path: str):
         try:
-            if not self.socket:
-                if not self.reconnect():
-                    raise ConnectionError("No se pudo establecer conexión con el servidor")
-            
+            buffer = b""
+            eof_marker = b"EOF"
             with open(file_path, "wb") as file:
                 while True:
-                    data = self.socket.recv(8192)  # Buffer más grande
+                    data = self.socket.recv(8192)
                     if not data:
                         break
-                    if data.endswith(b"EOF"):
-                        file.write(data[:-3])
+                    
+                    # Buscar marcador EOF en el buffer acumulado
+                    buffer += data
+                    if eof_marker in buffer:
+                        # Escribir todo hasta el marcador
+                        file.write(buffer.split(eof_marker)[0])
                         break
-                    file.write(data)
-            
-            print(f"Archivo recibido y guardado en {file_path}")
+                    
+                    # Escribir datos si el buffer supera el tamaño del marcador
+                    if len(buffer) > len(eof_marker):
+                        file.write(buffer[:-len(eof_marker)])
+                        buffer = buffer[-len(eof_marker):]
+
             return True
         except Exception as e:
             print(f"Error al recibir archivo: {e}")
@@ -181,39 +186,38 @@ class SocketClient:
                 callback(f"Error: {str(e)}")
     
     def _create_worker(self, hmi, json_data, handle=None, handle_videos=False, callback=None):
-        """Crea y configura un worker para procesar una tarea específica"""
         try:
-            # Crear worker
             worker = Worker(self, json_data, handle_videos, callback)
             
-            # Conectar señales según el tipo de operación
-            if handle:
-                if handle == "stop_video":
-                    worker.response_received.connect(hmi.handle_video_response)
-                elif handle == "start_video":
-                    worker.response_received.connect(hmi.handle_video_response)
-                elif handle == "start_realtime":
-                    worker.response_received.connect(hmi.handle_realtime_response)
-                elif handle == "cycle":
-                    worker.response_received.connect(hmi.handle_cycle_response)
-                elif handle == "stop_system":
-                    worker.response_received.connect(hmi.handle_ose_response)
+            # Validar que el worker se creó correctamente
+            if not worker:
+                raise RuntimeError("Failed to create worker")
+
+            # Mapeo de manejadores más robusto
+            handler_map = {
+                "stop_video": hmi.handle_video_response,
+                "start_video": hmi.handle_video_response,
+                "start_realtime": hmi.handle_realtime_response,
+                "cycle": hmi.handle_cycle_response,
+                "stop_system": hmi.handle_ose_response
+            }
             
-            # Conectar señal de finalización para limpieza
+            if handle and handle in handler_map:
+                worker.response_received.connect(handler_map[handle])
+            else:
+                worker.response_received.connect(hmi.default_handler)
+
             worker.finished.connect(lambda: self.cleanup_worker(worker))
             
-            # Almacenar y comenzar el worker
             with self.lock:
                 self.workers.append(worker)
                 worker.start()
-                
-            return worker
             
+            return worker
         except Exception as e:
-            print(f"Error al crear worker: {e}")
-            print(traceback.format_exc())
+            print(f"Error crítico al crear worker: {e}")
             if callback:
-                callback(f"Error: {str(e)}")
+                callback(f"Critical Error: {str(e)}")
             return None
     
     def cleanup_worker(self, worker):
