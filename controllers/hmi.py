@@ -4,7 +4,8 @@ import sys
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import QSize, QTimer
 from PyQt5.QtGui import QIcon, QImage, QPixmap
-from PyQt5.QtWidgets import QGraphicsScene
+from PyQt5.QtWidgets import QGraphicsScene, QApplication
+import serial
 
 from views.control import Control
 from services.connect import SocketClient
@@ -56,8 +57,8 @@ class ControlWindow(QtWidgets.QMainWindow):
 
         # Variables para manejar la captura y temporizador
         self.capture = None
-        self.timer = QTimer(self)
-        self.timer.timeout.connect(self.update_frame)
+        # self.timer = QTimer(self)
+        # self.timer.timeout.connect(self.update_frame)
         self.ui.PB_beta.clicked.connect(self.beta_caja)
         self.ui.PB_caja.clicked.connect(self.beta_caja)
 
@@ -292,34 +293,6 @@ class ControlWindow(QtWidgets.QMainWindow):
                 if self.ui.video_widget.parent():
                     self.ui.video_area.removeWidget(self.ui.video_widget)
                     self.ui.video_widget.hide()
-
-    def activate_camera(self):
-        self.capture = cv2.VideoCapture(0)
-        if not self.capture.isOpened():
-            print("No se pudo acceder a la cámara.")
-            return
-        self.timer.start(30)
-
-    def deactivate_camera(self):
-        if self.capture:
-            self.capture.release()
-            self.capture = None
-        self.timer.stop()
-
-    def update_frame(self):
-        ret, frame = self.capture.read()
-        if ret:
-            frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            height, width, channels = frame_rgb.shape
-            bytes_per_line = channels * width
-            q_image = QImage(
-                frame_rgb.data, width, height, bytes_per_line, QImage.Format_RGB888
-            )
-            pixmap = QPixmap.fromImage(q_image)
-            scene = QGraphicsScene()
-            scene.addPixmap(pixmap)
-            self.ui.graphicsView.setScene(scene)
-
     def enviomessege(self, json):
         self.client.send_json(json)
 

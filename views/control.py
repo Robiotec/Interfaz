@@ -399,7 +399,7 @@ class Control(object):
         self.checkBox_3.setText("")
         self.checkBox_3.setObjectName("checkBox_3")
         self.cb_video_grab = QtWidgets.QCheckBox(self.frame_20)
-        self.cb_video_grab.setGeometry(QtCore.QRect(10, 60, 121, 50))
+        self.cb_video_grab.setGeometry(QtCore.QRect(10, 60, 121, 40))
         self.cb_video_grab.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.cb_video_grab.setText("")
         self.cb_video_grab.setObjectName("CB_Camaras")
