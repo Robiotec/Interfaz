@@ -9,7 +9,7 @@ from PyQt5.QtWidgets import QMessageBox, QApplication
 from PyQt5.QtGui import QIcon
 from views.lg import Login  # Ventana Login
 from controllers.login import LoginHmi
-from control import Control  # Ventana Control
+from views.control import Control  # Ventana Control
 
 from multiprocessing import Process, cpu_count
 

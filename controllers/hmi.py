@@ -6,7 +6,7 @@ from PyQt5.QtCore import QSize, QTimer
 from PyQt5.QtGui import QIcon, QImage, QPixmap
 from PyQt5.QtWidgets import QGraphicsScene
 
-from control import Control
+from views.control import Control
 from services.connect import SocketClient
 
 
