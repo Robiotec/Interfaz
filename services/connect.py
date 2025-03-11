@@ -19,7 +19,6 @@ class SocketClient:
         self.is_processing = False
         self.max_concurrent_tasks = 2
         
-        # Iniciar hilo para procesar tareas en cola
         self.queue_thread = threading.Thread(target=self._process_queue, daemon=True)
         self.queue_thread.start()
     

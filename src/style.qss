@@ -208,5 +208,30 @@ QMainWindow{
         transition: all 0.4s ease;
         transform: scale(0.1);
     }
-    
+
+    #PB_1, #PB_2, #PB_3, #PB_4, #PB_5, #PB_6, #PB_7, #PB_8, #PB_9, #PB_10, #PB_11, #PB_12, #PB_13, #PB_14, #PB_15, #PB_16, #PB_17, #PB_18,
+    #PB_19, #PB_20, #PB_21, #PB_22, #PB_23, #PB_24, #PB_25, #PB_26, #PB_27, #PB_28, #PB_29, #PB_30, #PB_31, #PB_32, #PB_33, #PB_34, #PB_35, #PB_36,
+    #PB_37, #PB_38, #PB_39, #PB_40, #PB_41, #PB_42, #PB_43, #PB_44, #PB_45, #PB_46, #PB_47, #PB_48, #PB_49, #PB_50, #PB_51, #PB_52, #PB_53, #PB_54,
+    #PB_55, #PB_56, #PB_57, #PB_58, #PB_59, #PB_60, #PB_61, #PB_62, #PB_63, #PB_64, #PB_65, #PB_66, #PB_67, #PB_68, #PB_69, #PB_70, #PB_71, #PB_72,
+    #PB_73, #PB_74, #PB_75, #PB_76, #PB_77, #PB_78, #PB_79, #PB_80, #PB_81, #PB_82, #PB_83, #PB_84, #PB_85, #PB_86, #PB_87, #PB_88, #PB_89, #PB_90,
+    #PB_91, #PB_92, #PB_93, #PB_94, #PB_95, #PB_96, #PB_97, #PB_98, #PB_99{
+        background-color:rgb(75, 75, 75);
+        font: bold;
+        color: white
+    }
+
+    #PB_1:hover, #PB_2:hover, #PB_3:hover, #PB_4:hover, #PB_5:hover, #PB_6:hover, #PB_7:hover, #PB_8:hover, #PB_9:hover,
+    #PB_10:hover, #PB_11:hover, #PB_12:hover, #PB_13:hover, #PB_14:hover, #PB_15:hover, #PB_16:hover, #PB_17:hover, #PB_18:hover,
+    #PB_19:hover, #PB_20:hover, #PB_21:hover, #PB_22:hover, #PB_23:hover, #PB_24:hover, #PB_25:hover, #PB_26:hover, #PB_27:hover,
+    #PB_28:hover, #PB_29:hover, #PB_30:hover, #PB_31:hover, #PB_32:hover, #PB_33:hover, #PB_34:hover, #PB_35:hover, #PB_36:hover,
+    #PB_37:hover, #PB_38:hover, #PB_39:hover, #PB_40:hover, #PB_41:hover, #PB_42:hover, #PB_43:hover, #PB_44:hover, #PB_45:hover,
+    #PB_46:hover, #PB_47:hover, #PB_48:hover, #PB_49:hover, #PB_50:hover, #PB_51:hover, #PB_52:hover, #PB_53:hover, #PB_54:hover,
+    #PB_55:hover, #PB_56:hover, #PB_57:hover, #PB_58:hover, #PB_59:hover, #PB_60:hover, #PB_61:hover, #PB_62:hover, #PB_63:hover,
+    #PB_64:hover, #PB_65:hover, #PB_66:hover, #PB_67:hover, #PB_68:hover, #PB_69:hover, #PB_70:hover, #PB_71:hover, #PB_72:hover,
+    #PB_73:hover, #PB_74:hover, #PB_75:hover, #PB_76:hover, #PB_77:hover, #PB_78:hover, #PB_79:hover, #PB_80:hover, #PB_81:hover,
+    #PB_82:hover, #PB_83:hover, #PB_84:hover, #PB_85:hover, #PB_86:hover, #PB_87:hover, #PB_88:hover, #PB_89:hover, #PB_90:hover,
+    #PB_91:hover, #PB_92:hover, #PB_93:hover, #PB_94:hover, #PB_95:hover, #PB_96:hover, #PB_97:hover, #PB_98:hover, #PB_99:hover{
+        background-color:#ff6a00;
+        color: black
+    }
     

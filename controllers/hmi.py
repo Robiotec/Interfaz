@@ -58,7 +58,7 @@ class ControlWindow(QtWidgets.QMainWindow):
         # Variables para manejar la captura y temporizador
         self.capture = None
         self.timer = QTimer(self)
-        self.timer.timeout.connect(self.update_frame)
+        #self.timer.timeout.connect(self.update_frame)
         self.ui.PB_beta.clicked.connect(self.beta_caja)
         self.ui.PB_caja.clicked.connect(self.beta_caja)
 
