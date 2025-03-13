@@ -6,6 +6,9 @@ from PyQt5.QtCore import QSize, QTimer
 from PyQt5.QtGui import QIcon, QImage, QPixmap
 from PyQt5.QtWidgets import QGraphicsScene, QApplication
 import serial
+import time
+
+#from pymodbus.client import ModbusSerialClient
 
 from views.control import Control
 from services.connect import SocketClient
@@ -56,11 +59,25 @@ class ControlWindow(QtWidgets.QMainWindow):
             button.clicked.connect(self.activate_valve_individual)
 
         # Variables para manejar la captura y temporizador
-        self.capture = None
-        self.timer = QTimer(self)
+        #self.capture = None
+        #self.timer = QTimer(self)
         #self.timer.timeout.connect(self.update_frame)
         self.ui.PB_beta.clicked.connect(self.beta_caja)
         self.ui.PB_caja.clicked.connect(self.beta_caja)
+        self.ui.checkBox_3.clicked.connect(self.checkBox_3_toggled)
+
+        # Configuración del cliente Modbus
+        #self.modbus_client = ModbusSerialClient(
+        #    method='rtu',
+        #    port='COM3',  # Reemplaza con tu puerto COM
+        #    baudrate=9600,  # Reemplaza con la velocidad de baudios
+        #    parity='N',
+        #    stopbits=1,
+        #    bytesize=8,
+        #    timeout=1
+        #)
+        #self.modbus_connection = self.modbus_client.connect()
+
 
     # TODO: ================================= Obtener el Json =================================================================
     def obtener_json_base(self, device_type, additional_params=None):
@@ -238,16 +255,7 @@ class ControlWindow(QtWidgets.QMainWindow):
         self.ui.PB_test.setEnabled(enable)
 
     def emergencia(self):
-        
-        # Verificar si hay operaciones en curso y bloquear nuevas solicitudes mientras se procesa
-        if hasattr(self, "operacion_en_curso") and self.operacion_en_curso:
-            self.ui.label.setText("Procesando operación anterior, espere un momento...")
-            return
-        
         if not hasattr(self, "emergency_active"):
-            
-            self.operacion_en_curso = True
-            
             self.emergency_active = False
 
         self.emergency_active = not self.emergency_active
@@ -261,27 +269,20 @@ class ControlWindow(QtWidgets.QMainWindow):
                 self.ui.label.setText("Modo: Grabar Video Activado...")
                 self.ui.video_widget.hide()
                 self.ui.set_gif_visibility(True)
-                handle_type = "start_video"
             else:
                 self.ui.label.setText("Modo: Tiempo Real Activado...")
                 self.ui.set_gif_visibility(True)
-                handle_type = "start_realtime"
 
-            json_data = self.obtener_json_base(
-                "camera",
-                {
-                    "is_grabbing": self.ui.cb_video_grab.isChecked(),
-                    "selection": self.selection,
-                },
+            json = self.obtener_json_base(
+                #"camera",
+                #{
+                #    "is_grabbing": self.ui.cb_video_grab.isChecked(),
+                #    "selection": self.selection,
+                #},
+                "camera", {"is_predicting": True}
+                    
             )
-            # self.client.send_json(json)
-            # self.client.send_json_async(self, json_data, handle="start_video" if self.ui.cb_video_grab.isChecked() else "start_realtime")
-            self.client.send_json_async(
-                self,
-                json_data,
-                handle=handle_type,
-                callback=self.handle_start_complete
-            )
+            self.client.send_json(json)
 
         else:
             self.ui.PB_EMER.setIcon(QIcon("src/icons/Start.png"))
@@ -293,58 +294,131 @@ class ControlWindow(QtWidgets.QMainWindow):
             elif self.ui.label.text() == "Modo: Grabar Video Activado...":
                 self.ui.label.setText("Modo: Grabar Video Desactivado")
 
-            json_data = self.obtener_json_base(
+            json = self.obtener_json_base(
                 "stop_camera",
                 {"is_grabbing": False, "is_gridding": False, "is_predicting": False},
             )
             print("Sending stop camera request...")
-            # self.client.send_json(json)
-            
-            self.handle_stop_button()
-
-            # self.client.send_json(json_data)
+            self.client.send_json(json)
             
             if self.ui.cb_video_grab.isChecked():
                 self.client.send_json_async(
-                    self,
-                    json_data,
-                    handle="stop_video",
-                    handle_videos=True,
-                    callback=self.handle_stop_complete
-                )
+                    hmi=self, json_data=json, handle="stop_video", handle_videos=True
+            )
+            
             else:
+                print("No se recibieron videos.")
                 self.ui.media_player.stop()
-                self.ui.video_widget.hide()
-                
-                # Enviar solicitud de detención al servidor
-                self.client.send_json_async(
-                    self,
-                    json_data,
-                    callback=self.handle_stop_complete
-                )
-            
-            # self.handle_stop_button()
-            
-            # if self.ui.cb_video_grab.isChecked():
-            #     self.client.send_json_async(self, json_data, handle="stop_video", handle_videos=True)
-            # else:
-            #     self.ui.media_player.stop()
-            #     self.ui.video_widget.hide()
-            # if self.ui.cb_video_grab.isChecked():
-            #     self.client.send_json_async(
-            #         hmi=self, json_data=json, handle="stop_video", handle_videos=True
-            # )
-            
-            # else:
-            #     print("No se recibieron videos.")
-            #     self.ui.media_player.stop()
-            #     if self.ui.video_widget.parent():
-            #         self.ui.video_area.removeWidget(self.ui.video_widget)
-            #         self.ui.video_widget.hide()
-
-    # def activate_camera(self):
-    #     self.capture = cv2.VideoCapture(0)
-    #     if not self.capture.isOpened():
+                if self.ui.video_widget.parent():
+                    self.ui.video_area.removeWidget(self.ui.video_widget)
+                    self.ui.video_widget.hide()
+    #    # Verificar si hay operaciones en curso y bloquear nuevas solicitudes mientras se procesa
+    #    if hasattr(self, "operacion_en_curso") and self.operacion_en_curso:
+    #        self.ui.label.setText("Procesando operación anterior, espere un momento...")
+    #        return
+    #    
+    #    if not hasattr(self, "emergency_active"):
+    #        
+    #        self.operacion_en_curso = True
+    #        
+    #        self.emergency_active = False
+#
+    #    self.emergency_active = not self.emergency_active
+#
+    #    if self.emergency_active:
+    #        self.ui.PB_EMER.setIcon(QIcon("src/icons/Detener.png"))
+    #        self.ui.set_gif_visibility(True)
+    #        self.set_enable_buttons(False)
+#
+    #        if self.ui.cb_video_grab.isChecked():
+    #            self.ui.label.setText("Modo: Grabar Video Activado...")
+    #            self.ui.video_widget.hide()
+    #            self.ui.set_gif_visibility(True)
+    #            handle_type = "start_video"
+    #        else:
+    #            self.ui.label.setText("Modo: Tiempo Real Activado...")
+    #            self.ui.set_gif_visibility(True)
+    #            handle_type = "start_realtime"
+#
+    #        json_data = self.obtener_json_base(
+    #            "camera",
+    #            {
+    #                "is_grabbing": self.ui.cb_video_grab.isChecked(),
+    #                "selection": self.selection,
+    #            },
+    #        )
+#
+    #        # self.client.send_json(json)
+    #        # self.client.send_json_async(self, json_data, handle="start_video" if self.ui.cb_video_grab.isChecked() else "start_realtime")
+    #        self.client.send_json_async(
+    #            self,
+    #            json_data,
+    #            handle=handle_type,
+    #            callback=self.handle_start_complete
+    #        )
+#
+    #    else:
+    #        self.ui.PB_EMER.setIcon(QIcon("src/icons/Start.png"))
+    #        self.ui.set_gif_visibility(False)
+    #        self.set_enable_buttons(True)
+#
+    #        if self.ui.label.text() == "Modo: Tiempo Real Activado...":
+    #            self.ui.label.setText("Modo: Tiempo Real Desactivado...")
+    #        elif self.ui.label.text() == "Modo: Grabar Video Activado...":
+    #            self.ui.label.setText("Modo: Grabar Video Desactivado")
+#
+    #        json_data = self.obtener_json_base(
+    #            "stop_camera",
+    #            {"is_grabbing": False, "is_gridding": False, "is_predicting": False},
+    #        )
+    #        print("Sending stop camera request...")
+    #        # self.client.send_json(json)
+    #        
+    #        self.handle_stop_button()
+#
+    #        # self.client.send_json(json_data)
+    #        
+    #        if self.ui.cb_video_grab.isChecked():
+    #            self.client.send_json_async(
+    #                self,
+    #                json_data,
+    #                handle="stop_video",
+    #                handle_videos=True,
+    #                callback=self.handle_stop_complete
+    #            )
+    #        else:
+    #            self.ui.media_player.stop()
+    #            self.ui.video_widget.hide()
+    #            
+    #            # Enviar solicitud de detención al servidor
+    #            self.client.send_json_async(
+    #                self,
+    #                json_data,
+    #                callback=self.handle_stop_complete
+    #            )
+    #        
+    #        # self.handle_stop_button()
+    #        
+    #        # if self.ui.cb_video_grab.isChecked():
+    #        #     self.client.send_json_async(self, json_data, handle="stop_video", handle_videos=True)
+    #        # else:
+    #        #     self.ui.media_player.stop()
+    #        #     self.ui.video_widget.hide()
+    #        # if self.ui.cb_video_grab.isChecked():
+    #        #     self.client.send_json_async(
+    #        #         hmi=self, json_data=json, handle="stop_video", handle_videos=True
+    #        # )
+    #        
+    #        # else:
+    #        #     print("No se recibieron videos.")
+    #        #     self.ui.media_player.stop()
+    #        #     if self.ui.video_widget.parent():
+    #        #         self.ui.video_area.removeWidget(self.ui.video_widget)
+    #        #         self.ui.video_widget.hide()
+#
+    ## def activate_camera(self):
+    ##     self.capture = cv2.VideoCapture(0)
+    ##     if not self.capture.isOpened():
     #         print("No se pudo acceder a la cámara.")
     #         return
     #     self.timer.start(30)
@@ -372,13 +446,11 @@ class ControlWindow(QtWidgets.QMainWindow):
     def handle_start_complete(self, response):
         """Callback para cuando se completa el inicio de la operación"""
         print(f"Operación de inicio completada: {response}")
-        # Liberar el bloqueo de operación
         self.operacion_en_curso = False
 
     def handle_stop_complete(self, response):
         """Callback para cuando se completa la detención de la operación"""
         print(f"Operación de detención completada: {response}")
-        # Liberar el bloqueo de operación
         self.operacion_en_curso = False
 
     def enviomessege(self, json):
@@ -423,3 +495,52 @@ class ControlWindow(QtWidgets.QMainWindow):
             
     def on_worker_finished(self):
         print("El trabajador ha terminado su ejecución.")
+
+    #def checkBox_3_toggled(self):
+    #    if self.ui.checkBox_3.isChecked():
+    #        # Acción cuando el checkBox está marcado
+    #        print("El checkbox está marcado")
+    #    else:
+    #        # Acción cuando el checkBox está desmarcado
+    #        print("El checkbox está desmarcado")
+
+    def write_modbus_register(self, address, value):
+        if self.modbus_connection:
+            result = self.modbus_client.write_register(address, value, unit=1)
+            if result.isError():
+                print(f"Error al escribir en el registro {address}: {result}")
+        else:
+            print("No hay conexión Modbus.")
+
+    def read_modbus_register(self, address, count):
+        if self.modbus_connection:
+            result = self.modbus_client.read_holding_registers(address, count, unit=1)
+            if result.isError():
+                print(f"Error al leer el registro {address}: {result}")
+            return result
+        else:
+            print("No hay conexión Modbus.")
+            return None
+
+    def checkBox_3_toggled(self, checked):
+        
+        if checked:
+            # Habilitar el servomotor y ponerlo en marcha
+            self.write_modbus_register(0x0001, 1)  # Ejemplo: Registro de habilitación
+            time.sleep(0.1)
+            self.write_modbus_register(0x0002, 1)  # Ejemplo: Registro de arranque
+            time.sleep(0.1)
+            self.write_modbus_register(0x0003, 1000) # Ejemplo: Registro de velocidad, 1000 es valor de ejemplo.
+        else:
+            # Detener el servomotor y deshabilitarlo
+            self.write_modbus_register(0x0002, 0)  # Ejemplo: Registro de parada
+            time.sleep(0.1)
+            self.write_modbus_register(0x0001, 0)  # Ejemplo: Registro de deshabilitación
+
+    # ... (resto de tus métodos) ...
+
+    def closeEvent(self, event):
+        # Asegúrate de cerrar la conexión Modbus al cerrar la aplicación
+        if self.modbus_connection:
+            self.modbus_client.close()
+        event.accept()
