@@ -64,7 +64,7 @@ class ControlWindow(QtWidgets.QMainWindow):
         #self.timer.timeout.connect(self.update_frame)
         self.ui.PB_beta.clicked.connect(self.beta_caja)
         self.ui.PB_caja.clicked.connect(self.beta_caja)
-        self.ui.checkBox_3.clicked.connect(self.checkBox_3_toggled)
+        #self.ui.checkBox_3.clicked.connect(self.checkBox_3_toggled)
 
         # Configuración del cliente Modbus
         #self.modbus_client = ModbusSerialClient(
@@ -279,9 +279,15 @@ class ControlWindow(QtWidgets.QMainWindow):
                 #    "is_grabbing": self.ui.cb_video_grab.isChecked(),
                 #    "selection": self.selection,
                 #},
-                "camera", {"is_predicting": True}
-                    
+                "camera",
+                {
+                    "is_predicting": True,
+                    "is_ejecting": True,
+                    "selection": self.selection,
+                }
+                #"system", {"is_ejecting": True}
             )
+            #print(json)
             self.client.send_json(json)
 
         else:
@@ -504,43 +510,43 @@ class ControlWindow(QtWidgets.QMainWindow):
     #        # Acción cuando el checkBox está desmarcado
     #        print("El checkbox está desmarcado")
 
-    def write_modbus_register(self, address, value):
-        if self.modbus_connection:
-            result = self.modbus_client.write_register(address, value, unit=1)
-            if result.isError():
-                print(f"Error al escribir en el registro {address}: {result}")
-        else:
-            print("No hay conexión Modbus.")
-
-    def read_modbus_register(self, address, count):
-        if self.modbus_connection:
-            result = self.modbus_client.read_holding_registers(address, count, unit=1)
-            if result.isError():
-                print(f"Error al leer el registro {address}: {result}")
-            return result
-        else:
-            print("No hay conexión Modbus.")
-            return None
-
-    def checkBox_3_toggled(self, checked):
-        
-        if checked:
-            # Habilitar el servomotor y ponerlo en marcha
-            self.write_modbus_register(0x0001, 1)  # Ejemplo: Registro de habilitación
-            time.sleep(0.1)
-            self.write_modbus_register(0x0002, 1)  # Ejemplo: Registro de arranque
-            time.sleep(0.1)
-            self.write_modbus_register(0x0003, 1000) # Ejemplo: Registro de velocidad, 1000 es valor de ejemplo.
-        else:
-            # Detener el servomotor y deshabilitarlo
-            self.write_modbus_register(0x0002, 0)  # Ejemplo: Registro de parada
-            time.sleep(0.1)
-            self.write_modbus_register(0x0001, 0)  # Ejemplo: Registro de deshabilitación
-
-    # ... (resto de tus métodos) ...
-
-    def closeEvent(self, event):
-        # Asegúrate de cerrar la conexión Modbus al cerrar la aplicación
-        if self.modbus_connection:
-            self.modbus_client.close()
-        event.accept()
+    #def write_modbus_register(self, address, value):
+    #    if self.modbus_connection:
+    #        result = self.modbus_client.write_register(address, value, unit=1)
+    #        if result.isError():
+    #            print(f"Error al escribir en el registro {address}: {result}")
+    #    else:
+    #        print("No hay conexión Modbus.")
+#
+    #def read_modbus_register(self, address, count):
+    #    if self.modbus_connection:
+    #        result = self.modbus_client.read_holding_registers(address, count, unit=1)
+    #        if result.isError():
+    #            print(f"Error al leer el registro {address}: {result}")
+    #        return result
+    #    else:
+    #        print("No hay conexión Modbus.")
+    #        return None
+#
+    #def checkBox_3_toggled(self, checked):
+    #    
+    #    if checked:
+    #        # Habilitar el servomotor y ponerlo en marcha
+    #        self.write_modbus_register(0x0001, 1)  # Ejemplo: Registro de habilitación
+    #        time.sleep(0.1)
+    #        self.write_modbus_register(0x0002, 1)  # Ejemplo: Registro de arranque
+    #        time.sleep(0.1)
+    #        self.write_modbus_register(0x0003, 1000) # Ejemplo: Registro de velocidad, 1000 es valor de ejemplo.
+    #    else:
+    #        # Detener el servomotor y deshabilitarlo
+    #        self.write_modbus_register(0x0002, 0)  # Ejemplo: Registro de parada
+    #        time.sleep(0.1)
+    #        self.write_modbus_register(0x0001, 0)  # Ejemplo: Registro de deshabilitación
+#
+    ## ... (resto de tus métodos) ...
+#
+    #def closeEvent(self, event):
+    #    # Asegúrate de cerrar la conexión Modbus al cerrar la aplicación
+    #    if self.modbus_connection:
+    #        self.modbus_client.close()
+    #    event.accept()
