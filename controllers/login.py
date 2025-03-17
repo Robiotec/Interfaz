@@ -41,6 +41,6 @@ class LoginHmi(QtWidgets.QWidget):
     
     def redirect_to_control(self):
         self.control_window = ControlWindow()
-        self.control_window.showFullScreen()
+        # self.control_window.showFullScreen()
         self.control_window.show()
         self.main_windows.close()

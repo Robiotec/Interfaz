@@ -1616,6 +1616,28 @@ class Control(object):
         self.media_content = QMediaContent(QtCore.QUrl.fromLocalFile(path))
         self.media_player.setMedia(self.media_content)
         self.media_player.play()
+    
+    def reiniciar_sistema_video(self):
+        self.media_player.stop()
+
+        try:
+            self.media_player.setSource(QUrl())  # PyQt6
+        except AttributeError:
+
+            self.media_player.setMedia(QMediaContent())  # PyQt5
+
+
+        if self.video_widget.parent():
+            self.video_area.removeWidget(self.video_widget)
+            self.video_widget.deleteLater()
+        
+        self.video_widget = QVideoWidget()
+        self.video_area.addWidget(self.video_widget)
+        self.media_player.setVideoOutput(self.video_widget)
+        self.video_widget.show()
+
+        self.video_widget.repaint()
+        self.centralwidget.update()
 
 
 if __name__ == "__main__":
