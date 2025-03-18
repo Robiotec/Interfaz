@@ -264,8 +264,10 @@ class Control(object):
         self.frame_7.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_7.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_7.setObjectName("frame_7")
+        #self.frame_7.setStyleSheet("border: 1px solid orange;")
         self.video_area = QtWidgets.QVBoxLayout(self.frame_7)
-        self.video_area.setContentsMargins(2, 2, 2, 0)
+        self.video_area.setContentsMargins(0, 0, 0, 0)
+        self.video_area.setSpacing(0)
         self.video_area.setObjectName("video_area")
         self.label = QtWidgets.QLabel(self.frame_7)
         font = QtGui.QFont()
@@ -279,6 +281,7 @@ class Control(object):
         self.media_player = QMediaPlayer()
         self.video_widget = QVideoWidget()
         self.media_player.setVideoOutput(self.video_widget)
+        self.video_widget.setStyleSheet("border: 1px solid orange;")
 
         self.graphicsView.setObjectName("graphicsView")
         self.video_widget.hide()
@@ -288,6 +291,10 @@ class Control(object):
 
         self.graphicsView.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self.graphicsView.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+
+        self.video_widget.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        self.video_widget.setAspectRatioMode(QtCore.Qt.IgnoreAspectRatio)
+
         background_color = QtGui.QColor(
             38, 38, 38
         )  # Color gris claro (ajustalo como desees)
@@ -1606,6 +1613,7 @@ class Control(object):
 
     def set_gif_visibility(self, visible):
         self.gif_item.setVisible(visible)
+        
         if visible:
             self.video_widget.hide()  # Ocultar el video cuando se muestra el gif
         else:
@@ -1626,13 +1634,14 @@ class Control(object):
 
             self.media_player.setMedia(QMediaContent())  # PyQt5
 
-
         if self.video_widget.parent():
             self.video_area.removeWidget(self.video_widget)
             self.video_widget.deleteLater()
         
         self.video_widget = QVideoWidget()
         self.video_area.addWidget(self.video_widget)
+        self.video_widget.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        self.video_widget.setAspectRatioMode(QtCore.Qt.IgnoreAspectRatio)
         self.media_player.setVideoOutput(self.video_widget)
         self.video_widget.show()
 
