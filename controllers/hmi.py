@@ -283,7 +283,7 @@ class ControlWindow(QtWidgets.QMainWindow):
                     "selection": self.selection,
                 }
             )
-            self.client.send_json(json)
+            # self.client.send_json(json)
 
         else:
             self.ui.PB_EMER.setIcon(QIcon("src/icons/Start.png"))
@@ -300,24 +300,25 @@ class ControlWindow(QtWidgets.QMainWindow):
                 {"is_grabbing": False, "is_gridding": False, "is_predicting": False},
             )
             print("Sending stop camera request...")
-            self.client.send_json(json)
+            # self.client.send_json(json)
             
             if self.ui.cb_video_grab.isChecked():
-                self.client.send_json_async(
-                    hmi=self, 
-                    json_data=json, 
-                    handle="stop_video", 
-                    handle_videos=True
-                )
-                QTimer.singleShot(500, self.ui.reiniciar_sistema_video)
+                # self.client.send_json_async(
+                #     hmi=self, 
+                #     json_data=json, 
+                #     handle="stop_video", 
+                #     handle_videos=True
+                # )
+                # QTimer.singleShot(500, self.ui.reiniciar_sistema_video)
+                self.handle_video_response("sended_videos")
 
-            else:
-                print("No se recibieron videos.")
-                self.ui.reiniciar_sistema_video()
-                self.ui.media_player.stop()
-                if self.ui.video_widget.parent():
-                    self.ui.video_area.removeWidget(self.ui.video_widget)
-                    self.ui.video_widget.hide()
+            # else:
+            #     print("No se recibieron videos.")
+            #     self.ui.reiniciar_sistema_video()
+            #     self.ui.media_player.stop()
+            #     if self.ui.video_widget.parent():
+            #         self.ui.video_area.removeWidget(self.ui.video_widget)
+            #         self.ui.video_widget.hide()
     
     def handle_start_complete(self, response):
         """Callback para cuando se completa el inicio de la operación"""

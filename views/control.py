@@ -1620,11 +1620,16 @@ class Control(object):
             self.video_widget.show()  # Mostrar el video cuando el gif está oculto
 
     def view_media_player(self, path):
-        self.video_widget.show()
+        self.media_player.stop()
+        # if self.video_widget.parent():
+        #     self.video_area_layout.removeWidget(self.video_widget)
+        #     self.video_widget.hide()
+
         self.media_content = QMediaContent(QtCore.QUrl.fromLocalFile(path))
         self.media_player.setMedia(self.media_content)
         self.media_player.play()
-    
+        self.video_widget.show()
+
     def reiniciar_sistema_video(self):
         self.media_player.stop()
 
