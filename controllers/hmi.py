@@ -41,6 +41,9 @@ class ControlWindow(QtWidgets.QMainWindow):
         self.client = SocketClient("192.168.1.100", 5000)
         self.client.connect()
 
+        self.ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
+        time.sleep(2)
+
         # Variables para mover la ventana
         self.is_dragging = False
         self.offset = QtCore.QPoint()
@@ -50,8 +53,7 @@ class ControlWindow(QtWidgets.QMainWindow):
         self.ui.frame_cabecera.mouseMoveEvent = self.mouseMoveEvent
         self.ui.frame_cabecera.mouseReleaseEvent = self.mouseReleaseEvent
 
-        self.ui.PB_EMER.clicked.connect(self.emergencia)
-
+        self.ui.pb_sys.clicked.connect(self.toggle_system_operation)
         self.ui.pb_cycle.clicked.connect(self.cycles_valves)
 
         for i in range(1, 100):  # Del 1 al 99
@@ -64,6 +66,12 @@ class ControlWindow(QtWidgets.QMainWindow):
         #self.timer.timeout.connect(self.update_frame)
         self.ui.PB_beta.clicked.connect(self.beta_caja)
         self.ui.PB_caja.clicked.connect(self.beta_caja)
+        self.ui.button_run.clicked.connect(self.toggleRun)
+        self.ui.button_left.clicked.connect(self.leftMotor)
+        self.ui.button_right.clicked.connect(self.rightMotor)
+        self.ui.button_low_speed.clicked.connect(self.lowSpeed)
+        self.ui.button_high_speed.clicked.connect(self.highSpeed)
+        self.ui.button_medium_speed.clicked.connect(self.mediumSpeed)
         #self.ui.checkBox_3.clicked.connect(self.checkBox_3_toggled)
 
         # Configuración del cliente Modbus
@@ -77,6 +85,103 @@ class ControlWindow(QtWidgets.QMainWindow):
         #    timeout=1
         #)
         #self.modbus_connection = self.modbus_client.connect()
+
+    def toggleRun(self):
+        if self.ui.button_run.styleSheet() == "background-color: orange;":
+            self.ui.button_run.setStyleSheet("background-color: none;")
+            self.sendToSerial("D/RUN")
+        else:
+            self.ui.button_run.setStyleSheet("background-color: orange;")
+            self.sendToSerial("A/RUN")
+            self.readFromSerial()
+            #self.deactivateDirectionButtons()
+            #self.deactivateSpeedButtons()
+
+    def leftMotor(self):
+        if self.ui.button_left.styleSheet() == "background-color: orange;":
+            self.ui.button_left.setStyleSheet("background-color: none;")
+            self.sendToSerial("D/DIRECTION")
+        else:
+            self.ui.button_left.setStyleSheet("background-color: orange;")
+            self.sendToSerial("A/DIRECTION")
+            self.deactivateRightMotor()
+
+    def rightMotor(self):
+        if self.ui.button_right.styleSheet() == "background-color: orange;":
+            self.ui.button_right.setStyleSheet("background-color: none;")
+            self.sendToSerial("D/DIRECTION")
+        else:
+            self.ui.button_right.setStyleSheet("background-color: orange;")
+            self.sendToSerial("A/DIRECTION")
+            self.deactivateLeftMotor()
+
+    def lowSpeed(self):
+        if self.ui.button_low_speed.styleSheet() == "background-color: orange;":
+            self.ui.button_low_speed.setStyleSheet("background-color: none;")
+            self.sendToSerial("D/BAJA")
+        else:
+            self.ui.button_low_speed.setStyleSheet("background-color: orange;")
+            self.sendToSerial("A/BAJA")
+            self.deactivateSpeedButtonsExcept("low")
+
+    def mediumSpeed(self):
+        if self.ui.button_medium_speed.styleSheet() == "background-color: orange;":
+            self.ui.button_medium_speed.setStyleSheet("background-color: none;")
+            self.sendToSerial("D/MEDIA")
+        else:
+            self.ui.button_medium_speed.setStyleSheet("background-color: orange;")
+            self.sendToSerial("A/MEDIA")
+            self.deactivateSpeedButtonsExcept("medium")
+
+    def highSpeed(self):
+        if self.ui.button_high_speed.styleSheet() == "background-color: orange;":
+            self.ui.button_high_speed.setStyleSheet("background-color: none;")
+            self.sendToSerial("D/ALTA")
+        else:
+            self.ui.button_high_speed.setStyleSheet("background-color: orange;")
+            self.sendToSerial("A/ALTA")
+            self.deactivateSpeedButtonsExcept("high")
+
+    def deactivateDirectionButtons(self):
+        self.ui.button_left.setStyleSheet("background-color: none;")
+        self.ui.button_right.setStyleSheet("background-color: none;")
+
+    def deactivateSpeedButtons(self):
+        self.ui.button_low_speed.setStyleSheet("background-color: none;")
+        self.ui.button_medium_speed.setStyleSheet("background-color: none;")
+        self.ui.button_high_speed.setStyleSheet("background-color: none;")
+
+    def deactivateSpeedButtonsExcept(self, active_speed):
+        if active_speed != "low":
+            self.ui.button_low_speed.setStyleSheet("background-color: none;")
+        if active_speed != "medium":
+            self.ui.button_medium_speed.setStyleSheet("background-color: none;")
+        if active_speed != "high":
+            self.ui.button_high_speed.setStyleSheet("background-color: none;")
+
+    def deactivateLeftMotor(self):
+        self.ui.button_left.setStyleSheet("background-color: none;")
+        
+    def deactivateRightMotor(self):
+        self.ui.button_right.setStyleSheet("background-color: none;")
+        
+    def sendToSerial(self, command):
+        try:
+            print(f"Enviando comando: {command}")
+            command_with_newline = command + "\n"
+            self.ser.write(command_with_newline.encode())  # Envía el comando
+            time.sleep(0.1)
+        except serial.SerialException as e:
+            print(f"Error al enviar el comando: {e}")
+
+    def readFromSerial(self):
+        try:
+            response = self.ser.readline().decode('utf-8').strip()  # Lee la respuesta de Arduino
+            if response:
+                print(f"Respuesta de Arduino: {response}")  # Muestra la respuesta en Python
+        except serial.SerialException as e:
+            print(f"Error al leer del puerto serial: {e}")
+
 
 
     # TODO: ================================= Obtener el Json =================================================================
@@ -254,14 +359,9 @@ class ControlWindow(QtWidgets.QMainWindow):
         self.ui.PB_saranda.setEnabled(enable)
         self.ui.PB_test.setEnabled(enable)
 
-    def emergencia(self):
-        if not hasattr(self, "emergency_active"):
-            self.emergency_active = False
-
-        self.emergency_active = not self.emergency_active
-
-        if self.emergency_active:
-            self.ui.PB_EMER.setIcon(QIcon("src/icons/Detener.png"))
+    def toggle_system_operation(self):
+        if not self.system_active:
+            self.ui.pb_sys.setIcon(QIcon("src/icons/Detener.png"))
             self.ui.set_gif_visibility(True)
             self.set_enable_buttons(False)
 
@@ -286,7 +386,7 @@ class ControlWindow(QtWidgets.QMainWindow):
             # self.client.send_json(json)
 
         else:
-            self.ui.PB_EMER.setIcon(QIcon("src/icons/Start.png"))
+            self.ui.pb_sys.setIcon(QIcon("src/icons/Start.png"))
             self.ui.set_gif_visibility(False)
             self.set_enable_buttons(True)
 
@@ -319,7 +419,8 @@ class ControlWindow(QtWidgets.QMainWindow):
             #     if self.ui.video_widget.parent():
             #         self.ui.video_area.removeWidget(self.ui.video_widget)
             #         self.ui.video_widget.hide()
-    
+        self.system_active = not self.system_active
+        
     def handle_start_complete(self, response):
         """Callback para cuando se completa el inicio de la operación"""
         print(f"Operación de inicio completada: {response}")
