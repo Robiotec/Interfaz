@@ -37,12 +37,12 @@ class ControlWindow(QtWidgets.QMainWindow):
         self.selected_valve = None
         self.selection = 0
 
-        # * Conección con el servidor
+        # * Conección con el servidors
         self.client = SocketClient("192.168.1.100", 5000)
         self.client.connect()
 
-        self.ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
-        time.sleep(2)
+        self.ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1)
+        time.sleep(2)   
 
         # Variables para mover la ventana
         self.is_dragging = False
