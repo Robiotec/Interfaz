@@ -1433,6 +1433,368 @@ class Control(object):
         self.frame_12.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_12.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_12.setObjectName("frame_12")
+        self.frame_12.setStyleSheet("QFrame#frame_12 { border: 2px solid orange; }")
+
+ 
+
+
+ 
+
+        # 
+ 
+
+        layout = QtWidgets.QHBoxLayout(self.frame_12)
+ 
+
+
+ 
+
+        self.button_run = QtWidgets.QPushButton("RUN", self.frame_12)
+ 
+
+        self.button_run.setCursor(QtCore.Qt.PointingHandCursor)
+ 
+
+        self.button_run.setFixedHeight(40)
+ 
+
+        self.button_run.setStyleSheet("""
+ 
+
+            QPushButton {
+ 
+
+                background-color: white;  # Color de fondo
+ 
+
+                color: black;  # Color del texto
+ 
+
+                font-size: 16px;  # Tamaño de la fuente
+ 
+
+                border-radius: 10px;  # Bordes redondeados
+ 
+
+            }
+ 
+
+            QPushButton:hover {
+ 
+
+                background-color: #f0f0f0;  # Color de fondo cuando el mouse está encima
+ 
+
+            }
+ 
+
+        """)
+ 
+
+        layout.addWidget(self.button_run)
+ 
+
+
+ 
+
+        direction_group = QtWidgets.QGroupBox("CAMBIAR DIRECCIÓN", self.frame_12)
+ 
+
+        direction_group.setStyleSheet("QGroupBox { color: white; }")
+ 
+
+        direction_layout = QtWidgets.QHBoxLayout()
+ 
+
+
+ 
+
+        self.button_left = QtWidgets.QPushButton("←", self.frame_12)
+ 
+
+        self.button_left.setCursor(QtCore.Qt.PointingHandCursor)
+ 
+
+        self.button_left.setFixedSize(60, 60)
+ 
+
+        self.button_left.setStyleSheet("""
+ 
+
+            QPushButton {
+ 
+
+                background-color: white;
+ 
+
+                color: black;
+ 
+
+                font-size: 20px;
+ 
+
+                border-radius: 10px;
+ 
+
+            }
+ 
+
+            QPushButton:hover {
+ 
+
+                background-color: #f0f0f0;
+ 
+
+            }
+ 
+
+        """)
+ 
+
+
+ 
+
+        self.button_right = QtWidgets.QPushButton("→", self.frame_12)
+ 
+
+        self.button_right.setCursor(QtCore.Qt.PointingHandCursor)
+ 
+
+        self.button_right.setFixedSize(60, 60)
+ 
+
+        self.button_right.setStyleSheet("""
+ 
+
+            QPushButton {
+ 
+
+                background-color: white;
+ 
+
+                color: black;
+ 
+
+                font-size: 20px;
+ 
+
+                border-radius: 10px;
+ 
+
+            }
+ 
+
+            QPushButton:hover {
+ 
+
+                background-color: #f0f0f0;
+ 
+
+            }
+ 
+
+        """)
+ 
+
+
+ 
+
+        direction_layout.addWidget(self.button_left)
+ 
+
+        direction_layout.addWidget(self.button_right)
+ 
+
+
+ 
+
+        direction_group.setLayout(direction_layout)
+ 
+
+
+ 
+
+        layout.addWidget(direction_group)
+ 
+
+
+ 
+
+        speed_group = QtWidgets.QGroupBox("CAMBIAR VELOCIDAD", self.frame_12)
+ 
+
+        speed_group.setStyleSheet("QGroupBox { color: white; }")
+ 
+
+        speed_layout = QtWidgets.QHBoxLayout()
+ 
+
+
+ 
+
+        self.button_low_speed = QtWidgets.QPushButton("BAJA", self.frame_12)
+ 
+
+        self.button_low_speed.setCursor(QtCore.Qt.PointingHandCursor)
+ 
+
+        self.button_low_speed.setFixedSize(100, 40)
+ 
+
+        self.button_low_speed.setStyleSheet("""
+ 
+
+            QPushButton {
+ 
+
+                background-color: white;
+ 
+
+                color: black;
+ 
+
+                font-size: 14px;
+ 
+
+                border-radius: 10px;
+ 
+
+            }
+ 
+
+            QPushButton:hover {
+ 
+
+                background-color: #f0f0f0;
+ 
+
+            }
+ 
+
+        """)
+ 
+
+
+ 
+
+        self.button_medium_speed = QtWidgets.QPushButton("MEDIA", self.frame_12)
+ 
+
+        self.button_medium_speed.setCursor(QtCore.Qt.PointingHandCursor)
+ 
+
+        self.button_medium_speed.setFixedSize(100, 40)
+ 
+
+        self.button_medium_speed.setStyleSheet("""
+ 
+
+            QPushButton {
+ 
+
+                background-color: white;
+ 
+
+                color: black;
+ 
+
+                font-size: 14px;
+ 
+
+                border-radius: 10px;
+ 
+
+            }
+ 
+
+            QPushButton:hover {
+ 
+
+                background-color: #f0f0f0;
+ 
+
+            }
+ 
+
+        """)
+ 
+
+
+ 
+
+        self.button_high_speed = QtWidgets.QPushButton("ALTA", self.frame_12)
+ 
+
+        self.button_high_speed.setCursor(QtCore.Qt.PointingHandCursor)
+ 
+
+        self.button_high_speed.setFixedSize(100, 40)
+ 
+
+        self.button_high_speed.setStyleSheet("""
+ 
+
+            QPushButton {
+ 
+
+                background-color: white;
+ 
+
+                color: black;
+ 
+
+                font-size: 14px;
+ 
+
+                border-radius: 10px;
+ 
+
+            }
+ 
+
+            QPushButton:hover {
+ 
+
+                background-color: #f0f0f0;
+ 
+
+            }
+ 
+
+        """)
+ 
+
+
+ 
+
+        speed_layout.addWidget(self.button_low_speed)
+ 
+
+        speed_layout.addWidget(self.button_medium_speed)
+ 
+
+        speed_layout.addWidget(self.button_high_speed)
+ 
+
+
+ 
+
+        speed_group.setLayout(speed_layout)
+ 
+
+
+ 
+
+        layout.addWidget(speed_group)
+ 
+
+
+ 
+
+        layout.setSpacing(10)
+ 
+
+        layout.setAlignment(QtCore.Qt.AlignTop)
         self.verticalLayout_10.addWidget(self.frame_12)
         self.verticalLayout_10.setStretch(0, 2)
         self.verticalLayout_10.setStretch(1, 10)

@@ -41,6 +41,9 @@ class ControlWindow(QtWidgets.QMainWindow):
         self.client = SocketClient("192.168.1.100", 5000)
         self.client.connect()
 
+        self.ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1)
+        time.sleep(1)
+
         # Variables para mover la ventana
         self.is_dragging = False
         self.offset = QtCore.QPoint()
@@ -64,7 +67,309 @@ class ControlWindow(QtWidgets.QMainWindow):
         #self.timer.timeout.connect(self.update_frame)
         self.ui.PB_beta.clicked.connect(self.beta_caja)
         self.ui.PB_caja.clicked.connect(self.beta_caja)
+        self.ui.button_run.clicked.connect(self.toggleRun)
+ 
+
+        self.ui.button_left.clicked.connect(self.leftMotor)
+ 
+
+        self.ui.button_right.clicked.connect(self.rightMotor)
+ 
+
+        self.ui.button_low_speed.clicked.connect(self.lowSpeed)
+ 
+
+        self.ui.button_high_speed.clicked.connect(self.highSpeed)
+ 
+
+        self.ui.button_medium_speed.clicked.connect(self.mediumSpeed)
         #self.ui.checkBox_3.clicked.connect(self.checkBox_3_toggled)
+
+    def toggleRun(self):
+
+
+
+        if self.ui.button_run.styleSheet() == "background-color: orange;":
+
+
+            self.ui.button_run.setStyleSheet("background-color: none;")
+
+
+            self.sendToSerial("D/RUN")
+
+
+        else:
+
+
+            self.ui.button_run.setStyleSheet("background-color: orange;")
+
+
+            self.sendToSerial("A/RUN")
+
+
+            self.readFromSerial()
+
+
+            #self.deactivateDirectionButtons()
+
+
+            #self.deactivateSpeedButtons()
+
+
+
+
+
+    def leftMotor(self):
+
+
+        if self.ui.button_left.styleSheet() == "background-color: orange;":
+
+
+            self.ui.button_left.setStyleSheet("background-color: none;")
+
+
+            self.sendToSerial("D/DIRECTION")
+
+
+        else:
+
+
+            self.ui.button_left.setStyleSheet("background-color: orange;")
+
+
+            self.sendToSerial("A/DIRECTION")
+
+
+            self.deactivateRightMotor()
+
+
+
+
+
+    def rightMotor(self):
+
+
+        if self.ui.button_right.styleSheet() == "background-color: orange;":
+
+
+            self.ui.button_right.setStyleSheet("background-color: none;")
+
+
+            self.sendToSerial("D/DIRECTION")
+
+
+        else:
+
+
+            self.ui.button_right.setStyleSheet("background-color: orange;")
+
+
+            self.sendToSerial("A/DIRECTION")
+
+
+            self.deactivateLeftMotor()
+
+
+
+
+
+    def lowSpeed(self):
+
+
+        if self.ui.button_low_speed.styleSheet() == "background-color: orange;":
+
+
+            self.ui.button_low_speed.setStyleSheet("background-color: none;")
+
+
+            self.sendToSerial("D/BAJA")
+
+
+        else:
+
+
+            self.ui.button_low_speed.setStyleSheet("background-color: orange;")
+
+
+            self.sendToSerial("A/BAJA")
+
+
+            self.deactivateSpeedButtonsExcept("low")
+
+
+
+
+
+    def mediumSpeed(self):
+
+
+        if self.ui.button_medium_speed.styleSheet() == "background-color: orange;":
+
+
+            self.ui.button_medium_speed.setStyleSheet("background-color: none;")
+
+
+            self.sendToSerial("D/MEDIA")
+
+
+        else:
+
+
+            self.ui.button_medium_speed.setStyleSheet("background-color: orange;")
+
+
+            self.sendToSerial("A/MEDIA")
+
+
+            self.deactivateSpeedButtonsExcept("medium")
+
+
+
+
+
+    def highSpeed(self):
+
+
+        if self.ui.button_high_speed.styleSheet() == "background-color: orange;":
+
+
+            self.ui.button_high_speed.setStyleSheet("background-color: none;")
+
+
+            self.sendToSerial("D/ALTA")
+
+
+        else:
+
+
+            self.ui.button_high_speed.setStyleSheet("background-color: orange;")
+
+
+            self.sendToSerial("A/ALTA")
+
+
+            self.deactivateSpeedButtonsExcept("high")
+
+
+
+
+
+    def deactivateDirectionButtons(self):
+
+
+        self.ui.button_left.setStyleSheet("background-color: none;")
+
+
+        self.ui.button_right.setStyleSheet("background-color: none;")
+
+
+
+
+
+    def deactivateSpeedButtons(self):
+
+
+        self.ui.button_low_speed.setStyleSheet("background-color: none;")
+
+
+        self.ui.button_medium_speed.setStyleSheet("background-color: none;")
+
+
+        self.ui.button_high_speed.setStyleSheet("background-color: none;")
+
+
+
+
+
+    def deactivateSpeedButtonsExcept(self, active_speed):
+
+
+        if active_speed != "low":
+
+
+            self.ui.button_low_speed.setStyleSheet("background-color: none;")
+
+
+        if active_speed != "medium":
+
+
+            self.ui.button_medium_speed.setStyleSheet("background-color: none;")
+
+
+        if active_speed != "high":
+
+
+            self.ui.button_high_speed.setStyleSheet("background-color: none;")
+
+
+
+
+
+    def deactivateLeftMotor(self):
+
+
+        self.ui.button_left.setStyleSheet("background-color: none;")
+
+
+        
+
+
+    def deactivateRightMotor(self):
+
+
+        self.ui.button_right.setStyleSheet("background-color: none;")
+
+
+        
+
+
+    def sendToSerial(self, command):
+
+
+        try:
+
+
+            print(f"Enviando comando: {command}")
+
+
+            command_with_newline = command + "\n"
+
+
+            self.ser.write(command_with_newline.encode())  # Envía el comando
+
+
+            time.sleep(0.1)
+
+
+        except serial.SerialException as e:
+
+
+            print(f"Error al enviar el comando: {e}")
+
+
+
+
+
+    def readFromSerial(self):
+
+
+        try:
+
+
+            response = self.ser.readline().decode('utf-8').strip()  # Lee la respuesta de Arduino
+
+
+            if response:
+
+
+                print(f"Respuesta de Arduino: {response}")  # Muestra la respuesta en Python
+
+
+        except serial.SerialException as e:
+
+
+            print(f"Error al leer del puerto serial: {e}")
+
 
         # Configuración del cliente Modbus
         #self.modbus_client = ModbusSerialClient(
