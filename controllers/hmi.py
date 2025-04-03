@@ -2,11 +2,14 @@ import os
 import sys
 
 from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtCore import QSize, QTimer
+from PyQt5.QtCore import QSize, QTimer, Qt
 from PyQt5.QtGui import QIcon, QImage, QPixmap
 from PyQt5.QtWidgets import QGraphicsScene, QApplication
 import serial
 import time
+
+import cv2
+import numpy as np
 
 #from pymodbus.client import ModbusSerialClient
 
@@ -41,7 +44,7 @@ class ControlWindow(QtWidgets.QMainWindow):
         self.client = SocketClient("192.168.1.100", 5000)
         self.client.connect()
 
-        self.ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1)
+        #self.ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1)
         time.sleep(1)
 
         # Variables para mover la ventana
@@ -68,125 +71,145 @@ class ControlWindow(QtWidgets.QMainWindow):
         self.ui.PB_beta.clicked.connect(self.beta_caja)
         self.ui.PB_caja.clicked.connect(self.beta_caja)
         self.ui.button_run.clicked.connect(self.toggleRun)
- 
-
         self.ui.button_left.clicked.connect(self.leftMotor)
- 
-
         self.ui.button_right.clicked.connect(self.rightMotor)
- 
-
         self.ui.button_low_speed.clicked.connect(self.lowSpeed)
- 
-
         self.ui.button_high_speed.clicked.connect(self.highSpeed)
- 
-
         self.ui.button_medium_speed.clicked.connect(self.mediumSpeed)
         #self.ui.checkBox_3.clicked.connect(self.checkBox_3_toggled)
 
-    def toggleRun(self):
+        # Inicializaciones de las camaras
+        self.capture_camera = None
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.updateFrame) 
+        self.ui.PB_config.clicked.connect(self.displayCameras)
 
+        self.ui.PB_grid.clicked.connect(self.toggleGrid)
 
+        self.current_index = 0
+        self.show_grid = False
 
-        if self.ui.button_run.styleSheet() == "background-color: orange;":
-
-
-            self.ui.button_run.setStyleSheet("background-color: none;")
-
-
-            self.sendToSerial("D/RUN")
-
-
+    def displayCameras(self):
+        if self.capture_camera is None:
+            self.capture_camera = cv2.VideoCapture(0)
+            if not self.capture_camera.isOpened():
+                print("Error: No se puede abrir la cámara.")
+                return
+            self.timer.start(20)
         else:
+            self.capture_camera.release()
+            self.capture_camera = None
+            self.timer.stop()
+        print("Displaying cameras...")
+    
+    #def updateFrame(self):
+    #    ret, frame = self.capture_camera.read()
+    #    if ret:
+    #        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+#
+    #        height, width, channel = frame.shape
+#
+    #        new_width = width * 2
+    #        frame = cv2.resize(frame, (new_width, height), interpolation=cv2.INTER_LINEAR)
+#
+    #        bytes_per_line = 3 * new_width
+    #        qimg = QImage(frame.data, new_width, height, bytes_per_line, QImage.Format_RGB888)
+    #        pixmap = QPixmap.fromImage(qimg)
+#
+    #        self.ui.camera_label.setPixmap(pixmap.scaled(self.ui.camera_label.size(), Qt.KeepAspectRatio))
+    
+    def toggleGrid(self):
+        self.show_grid = not self.show_grid
+        print(f"Grid {'activado' if self.show_grid else 'desactivado'}")
+        self.current_index = 0
+
+    def gridding(self, frame):
+        if frame is not None and self.show_grid:
+            rows = 5
+            cols = 5
+            height, width, _ = frame.shape
+
+            neon_green = (0, 255, 0)
+
+            for i in range(1, rows):
+                y = int(i * height / rows)
+                cv2.line(frame, (0, y), (width, y), neon_green, 2)
+
+            for i in range(1, cols):
+                x = int(i * width / cols)
+                cv2.line(frame, (x, 0), (x, height), neon_green, 2)
+        
+        return frame
+
+    def updateFrame(self):
+        image_folder = "./src/img"
+        image_files = [f for f in os.listdir(image_folder) if f.endswith(('.jpg', '.png', '.jpeg'))]
+
+        if len(image_files) == 0:
+            print("No se encontraron imágenes en la carpeta.")
+            return
+
+        if self.current_index >= len(image_files):
+            self.current_index = 0
+
+        img_path = os.path.join(image_folder, image_files[self.current_index])
+        frame = cv2.imread(img_path)
+
+        if frame is not None:
+            frame = self.gridding(frame)
+
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+            height, width, channel = frame.shape
+            parent_width = self.ui.camera_label.width()
+            aspect_ratio = height / width
+            new_height = int(parent_width * aspect_ratio)
+
+            frame = cv2.resize(frame, (parent_width, new_height), interpolation=cv2.INTER_LINEAR)
+            bytes_per_line = 3 * parent_width
+            qimg = QImage(frame.data, parent_width, new_height, bytes_per_line, QImage.Format_RGB888)
+            pixmap = QPixmap.fromImage(qimg)
+
+            self.ui.camera_label.setPixmap(pixmap.scaled(self.ui.camera_label.size(), Qt.KeepAspectRatio))
+            self.ui.camera_label1.setPixmap(pixmap.scaled(self.ui.camera_label1.size(), Qt.KeepAspectRatio))
+
+            self.current_index += 1
 
 
+    def toggleRun(self):
+        if self.ui.button_run.styleSheet() == "background-color: orange;":
+            self.ui.button_run.setStyleSheet("background-color: none;")
+            self.sendToSerial("D/RUN")
+        else:
             self.ui.button_run.setStyleSheet("background-color: orange;")
-
-
             self.sendToSerial("A/RUN")
-
-
             self.readFromSerial()
-
-
             #self.deactivateDirectionButtons()
-
-
             #self.deactivateSpeedButtons()
 
-
-
-
-
     def leftMotor(self):
-
-
         if self.ui.button_left.styleSheet() == "background-color: orange;":
-
-
             self.ui.button_left.setStyleSheet("background-color: none;")
-
-
             self.sendToSerial("D/DIRECTION")
-
-
         else:
-
-
             self.ui.button_left.setStyleSheet("background-color: orange;")
-
-
             self.sendToSerial("A/DIRECTION")
-
-
             self.deactivateRightMotor()
 
-
-
-
-
     def rightMotor(self):
-
-
         if self.ui.button_right.styleSheet() == "background-color: orange;":
-
-
             self.ui.button_right.setStyleSheet("background-color: none;")
-
-
             self.sendToSerial("D/DIRECTION")
-
-
         else:
-
-
             self.ui.button_right.setStyleSheet("background-color: orange;")
-
-
             self.sendToSerial("A/DIRECTION")
-
-
             self.deactivateLeftMotor()
 
-
-
-
-
     def lowSpeed(self):
-
-
         if self.ui.button_low_speed.styleSheet() == "background-color: orange;":
-
-
             self.ui.button_low_speed.setStyleSheet("background-color: none;")
-
-
             self.sendToSerial("D/BAJA")
-
-
         else:
-
 
             self.ui.button_low_speed.setStyleSheet("background-color: orange;")
 
