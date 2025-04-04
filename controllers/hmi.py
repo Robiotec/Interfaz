@@ -16,7 +16,6 @@ import numpy as np
 from views.control import Control
 from services.connect import SocketClient
 
-
 class ControlWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
         super().__init__()
@@ -128,7 +127,6 @@ class ControlWindow(QtWidgets.QMainWindow):
             rows = 5
             cols = 5
             height, width, _ = frame.shape
-
             neon_green = (0, 255, 0)
 
             for i in range(1, rows):
@@ -157,24 +155,18 @@ class ControlWindow(QtWidgets.QMainWindow):
 
         if frame is not None:
             frame = self.gridding(frame)
-
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-
             height, width, channel = frame.shape
             parent_width = self.ui.camera_label.width()
             aspect_ratio = height / width
             new_height = int(parent_width * aspect_ratio)
-
             frame = cv2.resize(frame, (parent_width, new_height), interpolation=cv2.INTER_LINEAR)
             bytes_per_line = 3 * parent_width
             qimg = QImage(frame.data, parent_width, new_height, bytes_per_line, QImage.Format_RGB888)
             pixmap = QPixmap.fromImage(qimg)
-
             self.ui.camera_label.setPixmap(pixmap.scaled(self.ui.camera_label.size(), Qt.KeepAspectRatio))
             self.ui.camera_label1.setPixmap(pixmap.scaled(self.ui.camera_label1.size(), Qt.KeepAspectRatio))
-
             self.current_index += 1
-
 
     def toggleRun(self):
         if self.ui.button_run.styleSheet() == "background-color: orange;":
@@ -210,187 +202,66 @@ class ControlWindow(QtWidgets.QMainWindow):
             self.ui.button_low_speed.setStyleSheet("background-color: none;")
             self.sendToSerial("D/BAJA")
         else:
-
             self.ui.button_low_speed.setStyleSheet("background-color: orange;")
-
-
             self.sendToSerial("A/BAJA")
-
-
             self.deactivateSpeedButtonsExcept("low")
 
-
-
-
-
     def mediumSpeed(self):
-
-
         if self.ui.button_medium_speed.styleSheet() == "background-color: orange;":
-
-
             self.ui.button_medium_speed.setStyleSheet("background-color: none;")
-
-
             self.sendToSerial("D/MEDIA")
-
-
         else:
-
-
             self.ui.button_medium_speed.setStyleSheet("background-color: orange;")
-
-
             self.sendToSerial("A/MEDIA")
-
-
             self.deactivateSpeedButtonsExcept("medium")
 
-
-
-
-
     def highSpeed(self):
-
-
         if self.ui.button_high_speed.styleSheet() == "background-color: orange;":
-
-
             self.ui.button_high_speed.setStyleSheet("background-color: none;")
-
-
             self.sendToSerial("D/ALTA")
-
-
         else:
-
-
             self.ui.button_high_speed.setStyleSheet("background-color: orange;")
-
-
             self.sendToSerial("A/ALTA")
-
-
             self.deactivateSpeedButtonsExcept("high")
 
-
-
-
-
     def deactivateDirectionButtons(self):
-
-
         self.ui.button_left.setStyleSheet("background-color: none;")
-
-
         self.ui.button_right.setStyleSheet("background-color: none;")
-
-
-
-
 
     def deactivateSpeedButtons(self):
-
-
         self.ui.button_low_speed.setStyleSheet("background-color: none;")
-
-
         self.ui.button_medium_speed.setStyleSheet("background-color: none;")
-
-
         self.ui.button_high_speed.setStyleSheet("background-color: none;")
 
-
-
-
-
     def deactivateSpeedButtonsExcept(self, active_speed):
-
-
         if active_speed != "low":
-
-
             self.ui.button_low_speed.setStyleSheet("background-color: none;")
-
-
         if active_speed != "medium":
-
-
             self.ui.button_medium_speed.setStyleSheet("background-color: none;")
-
-
         if active_speed != "high":
-
-
             self.ui.button_high_speed.setStyleSheet("background-color: none;")
 
-
-
-
-
     def deactivateLeftMotor(self):
-
-
         self.ui.button_left.setStyleSheet("background-color: none;")
 
-
-        
-
-
     def deactivateRightMotor(self):
-
-
         self.ui.button_right.setStyleSheet("background-color: none;")
 
-
-        
-
-
     def sendToSerial(self, command):
-
-
         try:
-
-
             print(f"Enviando comando: {command}")
-
-
             command_with_newline = command + "\n"
-
-
             self.ser.write(command_with_newline.encode())  # Envía el comando
-
-
             time.sleep(0.1)
-
-
         except serial.SerialException as e:
-
-
             print(f"Error al enviar el comando: {e}")
 
-
-
-
-
     def readFromSerial(self):
-
-
         try:
-
-
             response = self.ser.readline().decode('utf-8').strip()  # Lee la respuesta de Arduino
-
-
             if response:
-
-
                 print(f"Respuesta de Arduino: {response}")  # Muestra la respuesta en Python
-
-
         except serial.SerialException as e:
-
-
             print(f"Error al leer del puerto serial: {e}")
 
 
